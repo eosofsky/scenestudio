@@ -13,21 +13,25 @@ public class Draw : MonoBehaviour
 	List<Vector3> linePoints = new List<Vector3>();
 	LineRenderer lineRenderer;
 	private bool isMousePressed;
-	private float startWidth = 0.01f;
-	private float endWidth = 0.01f;
-	public float threshold = 0.001f;
-	public Camera thisCamera;
+	private float startWidth = 0.1f;
+	private float endWidth = 0.1f;
+	float threshold = 0.001f;
+	Camera thisCamera;
 	int lineCount = 0;
+	int canvasMask;
+	float camRayLength = 100f;
 	
 	Vector3 lastPos = Vector3.one * float.MaxValue;
-
+	
 	void Awake()
 	{
 		thisCamera = Camera.main;
 		lineRenderer = gameObject.AddComponent<LineRenderer> ();
 		lineRenderer.SetVertexCount (0);
 		lineRenderer.material.color = Color.black;
+		//lineRenderer.shadowCastingMode
 		isMousePressed = true;
+		canvasMask = LayerMask.GetMask ("Canvas");
 	}
 	
 	void Update()
@@ -35,22 +39,23 @@ public class Draw : MonoBehaviour
 		if (Input.GetMouseButtonUp (0)) {
 			isMousePressed = false;
 		}
-
+		
 		if (isMousePressed) {
-			Vector3 mousePos = Input.mousePosition;
-			mousePos.z = thisCamera.nearClipPlane;
-			Vector3 mouseWorld = thisCamera.ScreenToWorldPoint (mousePos);
-			
-			float dist = Vector3.Distance (lastPos, mouseWorld);
-			if (dist <= threshold)
-				return;
-			
-			lastPos = mouseWorld;
-			if (linePoints == null)
-				linePoints = new List<Vector3> ();
-			linePoints.Add (mouseWorld);
-			
-			UpdateLine ();
+			Ray camRay = thisCamera.ScreenPointToRay (Input.mousePosition);
+			RaycastHit canvasHit;
+			if (Physics.Raycast (camRay, out canvasHit, camRayLength, canvasMask)) 
+			{
+				Vector3 hitPoint = canvasHit.point;
+				hitPoint.z-=0.01f;
+				float dist = Vector3.Distance (lastPos, hitPoint);
+				if (dist <= threshold)
+					return;
+				lastPos = hitPoint;
+				if (linePoints == null)
+					linePoints = new List<Vector3> ();
+				linePoints.Add (hitPoint);
+				UpdateLine ();
+			}
 		}
 	}
 	
