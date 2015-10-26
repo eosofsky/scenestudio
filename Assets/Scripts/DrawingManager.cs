@@ -3,6 +3,7 @@ using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class DrawingManager : MonoBehaviour
 {
@@ -45,8 +46,9 @@ public class DrawingManager : MonoBehaviour
 		isMousePressed = false;
 		
 		canvasMask = LayerMask.GetMask ("Canvas");
-		
-		texture = new Texture2D(500, 300);
+
+		texture = new Texture2D(1000, 1000);
+
 		GetComponent<Renderer>().material.mainTexture = texture;
 		
 		clear ();
@@ -151,19 +153,24 @@ public class DrawingManager : MonoBehaviour
 
 				texture.Apply();
 			}
+			else {
+				initial = true;
+			}
 		}
 		
-		if (Input.GetButton ("Jump")) {
-			int size = texture.width * texture.height;
-			Color[] array = texture.GetPixels ();
-			float[] vals = new float[size * 4];
-			for (int i = 0; i < size; i++) {
-				Color pixel = array[i];
-				vals[i*4] = pixel.r;
-				vals[i*4+1] = pixel.g;
-				vals[i*4+2] = pixel.b;
-				vals[i*4+3] = pixel.a;
-			}
+		if (Input.GetButton ("Cancel")) {
+			byte [] bytes = texture.EncodeToJPG ();
+			File.WriteAllBytes ("testout.jpg", bytes);
+//			int size = texture.width * texture.height;
+//			Color[] array = texture.GetPixels ();
+//			float[] vals = new float[size * 4];
+//			for (int i = 0; i < size; i++) {
+//				Color pixel = array[i];
+//				vals[i*4] = pixel.r;
+//				vals[i*4+1] = pixel.g;
+//				vals[i*4+2] = pixel.b;
+//				vals[i*4+3] = pixel.a;
+//			}
 			//print ("here");
 		}
 
