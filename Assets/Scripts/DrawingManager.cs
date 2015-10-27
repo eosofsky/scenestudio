@@ -41,33 +41,8 @@ public class DrawingManager : MonoBehaviour
 		texture.SetPixel(x+1, y, Color.black);
 		texture.SetPixel(x+1, y+1, Color.black);
 	}
-	
-	void Awake ()
-	{	
-		isMousePressed = false;
-		
-		canvasMask = LayerMask.GetMask ("Canvas");
 
-		texture = new Texture2D(1000, 1000);
-
-		GetComponent<Renderer>().material.mainTexture = texture;
-		
-		clear ();
-		
-		lastpoint = new Vector2 (0,0);
-		initial = true;
-		
-		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
-		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
-	}
-	
-	void Update()
-	{
-		/* 
-		 * To use Wiimote, person should run DarwiinRemote and start recording into a file called
-		 * "wiimote.txt" in the SceneStudio directory. Once that is up and running, run this file
-		 * and the program will start reading coordinates from there.
-		 */
+	int getWiimoteCoords() {
 		string coordinates = "wiimote.txt";
 		string coordinateFile = System.IO.Path.GetFullPath (coordinates);
 		
@@ -108,13 +83,60 @@ public class DrawingManager : MonoBehaviour
 				UnityEngine.Debug.Log (accX + " " + accY + " " + accZ);
 			}
 			
-			//			using (StreamWriter sw = new StreamWriter(coordinates, false)) {
-			//				//refresh so that we won't read it in again next time
-			//				sw.WriteLine("time,AccX,AccY,AccZ,pressureTR, pressureBR, pressureTL,");
-			//				sw.WriteLine("pressureBL,rawPressureTR,rawPressureBR,rawPressureTL,rawPressureBL");
-			//			}
+			//using (StreamWriter sw = new StreamWriter(coordinates, false)) {
+			////refresh so that we won't read it in again next time
+			//sw.WriteLine("time,AccX,AccY,AccZ,pressureTR, pressureBR, pressureTL,");
+			//sw.WriteLine("pressureBL,rawPressureTR,rawPressureBR,rawPressureTL,rawPressureBL");
 		}
+		return 0;
+	}
+	
+	void Awake ()
+	{	
+		isMousePressed = false;
+		
+		canvasMask = LayerMask.GetMask ("Canvas");
+		
+		texture = new Texture2D(500, 300);
+		GetComponent<Renderer>().material.mainTexture = texture;
+		
+		clear ();
+		
+		lastpoint = new Vector2 (0,0);
+		initial = true;
+		
+		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
+		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
+	}
 
+	/* 
+	 * To use Wiimote, person should run DarwiinRemote and start recording into a file called
+	 * "wiimote.txt" in the SceneStudio directory. Once that is up and running, run this file
+	 * and the program will start reading coordinates from there.
+	 */
+	void Update()
+	{
+
+		//TODO: on mouse down, set the position of the cursor to the center
+		/* on right button down, start drawing 
+		 * 
+		 * make new point object that represents the mouse
+		 * have that mark where you are and move around when the wiimote changes acceleration
+		 * 
+		 * 
+		 * use acceleration to determine where to go
+		 */
+
+		if (Input.GetKey (KeyCode.Z)) {
+			//place object in center of screen
+			getWiimoteCoords ();
+			if (Input.GetKey (KeyCode.X)) {
+				//start drawing
+				UnityEngine.Debug.Log ("x is pressed");
+			}
+		}
+		
+		
 		if (Input.GetMouseButtonDown (0)) {
 			isMousePressed = true;
 		}
@@ -174,7 +196,6 @@ public class DrawingManager : MonoBehaviour
 //			}
 			//print ("here");
 		}
-
 	}
 	
 	public void clear () {
