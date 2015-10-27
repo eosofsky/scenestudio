@@ -18,6 +18,7 @@ public class DrawingManager : MonoBehaviour
 	private float widthFactor;
 	private float heightFactor;
 	private Vector2 lastpoint;
+	public Camera thisCamera;
 	
 	//for Wiimote
 	int calY = 100;
@@ -124,7 +125,7 @@ public class DrawingManager : MonoBehaviour
 		}
 		
 		if (isMousePressed) {
-			Ray camRay = Camera.main.ScreenPointToRay (Input.mousePosition);
+			Ray camRay = thisCamera.ScreenPointToRay (Input.mousePosition);
 			RaycastHit canvasHit;
 			if (Physics.Raycast (camRay, out canvasHit, camRayLength, canvasMask)) 
 			{
