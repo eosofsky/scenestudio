@@ -97,7 +97,7 @@ public class DrawingManager : MonoBehaviour
 		
 		canvasMask = LayerMask.GetMask ("Canvas");
 		
-		texture = new Texture2D(500, 300);
+		texture = new Texture2D(1000, 1000);
 		GetComponent<Renderer>().material.mainTexture = texture;
 		
 		clear ();
