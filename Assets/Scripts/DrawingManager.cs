@@ -20,6 +20,9 @@ public class DrawingManager : MonoBehaviour
 	private float heightFactor;
 	private Vector2 lastpoint;
 	public Camera thisCamera;
+	public String[] twoDim;
+	public GameObject[] threeDim;
+	private Dictionary<String, GameObject> modelMap;
 	
 	//for Wiimote
 	float calZ = -1;
@@ -144,6 +147,14 @@ public class DrawingManager : MonoBehaviour
 		
 		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
 		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
+
+		modelMap = new Dictionary<String, GameObject>();
+		if (twoDim.Length != threeDim.Length) {
+			print ("Error!");
+		}
+		for (int i = 0; i < twoDim.Length; i++) {
+			modelMap.Add (twoDim [i], threeDim [i]);
+		}
 	}
 	
 	/* 
@@ -240,8 +251,24 @@ public class DrawingManager : MonoBehaviour
 		}
 		
 		if (Input.GetButton ("Cancel")) {
+			//Remove border
+			for (int y = 0; y < texture.height; y++) {
+				for (int x = 0; x < texture.width; x++) {
+					if (x < 5 || y < 8 || x > texture.width - 6 || y > texture.height - 9)
+						texture.SetPixel(x, y, Color.white);
+				}
+			}
 			byte [] bytes = texture.EncodeToJPG ();
 			File.WriteAllBytes ("testout.jpg", bytes);
+			
+			//Run through ml algorithm here
+			String output = "apple";
+			Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
+			Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
+			print (loc);
+			print (rot);
+			Instantiate(modelMap[output], loc, rot);
+
 //			int size = texture.width * texture.height;
 //			Color[] array = texture.GetPixels ();
 //			float[] vals = new float[size * 4];
@@ -259,7 +286,10 @@ public class DrawingManager : MonoBehaviour
 	public void clear () {
 		for (int y = 0; y < texture.height; y++) {
 			for (int x = 0; x < texture.width; x++) {
-				texture.SetPixel(x, y, Color.white);
+				if (x < 5 || y < 8 || x > texture.width - 6 || y > texture.height - 9)
+					texture.SetPixel(x, y, Color.black);
+				else
+					texture.SetPixel(x, y, Color.white);
 			}
 		}
 		texture.Apply();
