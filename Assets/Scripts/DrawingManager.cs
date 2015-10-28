@@ -3,6 +3,7 @@ using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Sprites;
 using System.IO;
 
 public class DrawingManager : MonoBehaviour
@@ -21,13 +22,17 @@ public class DrawingManager : MonoBehaviour
 	public Camera thisCamera;
 	
 	//for Wiimote
-	int calY = 100;
-	int calX = -100;
-	int smooth = 20;
+	float calZ = -1;
+	float calX = -100;
+	float smooth = 20;
 	int lastLineWiiMote;
 	double oldAccX = 0, oldAccY = 0, oldAccZ = 0;
 	double accX = 0, accY = 0, accZ = 0;
-	
+	public GameObject cursor;
+	private bool zPressed;
+	private bool xPressed;
+	Quaternion rot; //for pointing to where cursor should go
+
 	void drawPoint(Vector2 point) {
 		int x = (int) point.x;
 		int y = (int) point.y;
@@ -43,13 +48,11 @@ public class DrawingManager : MonoBehaviour
 	}
 
 	int getWiimoteCoords() {
+
 		string coordinates = "wiimote.txt";
-		string coordinateFile = System.IO.Path.GetFullPath (coordinates);
-		
+		string coordinateFile = Path.GetFileName (coordinates);
 		string[] lines;
 		string[][] values;
-		
-		UnityEngine.Debug.Log (coordinateFile);
 		
 		//gets the coordinates from the file outputted by DarwiinRemote
 		if (System.IO.File.Exists(coordinateFile)){ 
@@ -77,10 +80,12 @@ public class DrawingManager : MonoBehaviour
 				} else {
 					//changed, so update to the new accelerations
 					oldAccX = accX; oldAccY = accY; oldAccZ = accZ;
-					accX = tempX; accY = tempY; accZ = tempZ;
+					accX = tempX; accY = tempY; accZ = tempZ - calZ;
 				}
-				
-				UnityEngine.Debug.Log (accX + " " + accY + " " + accZ);
+
+				/*Quaternion target = Quaternion.Euler ((float)(calZ-accZ*3), (float)0, (float)0);
+				rot = Quaternion.Slerp (transform.rotation, target, Time.deltaTime*smooth);
+				Debug.Log(rot);*/
 			}
 			
 			//using (StreamWriter sw = new StreamWriter(coordinates, false)) {
@@ -90,10 +95,42 @@ public class DrawingManager : MonoBehaviour
 		}
 		return 0;
 	}
+
+	Vector2 cursorTarget () {
+		Vector3 currPos = cursor.transform.localPosition;
+		float x = (float)(currPos.x + ((cursor.GetComponent<Renderer> ()).bounds.size.x / 2));
+		float y = (float)(currPos.z - ((cursor.GetComponent<Renderer> ()).bounds.size.y / 2));
+		return new Vector2 (x, y);
+	}
+
+	Vector2 cursorOnCanvas () {
+		Vector2 position = cursorTarget ();
+		float width = topRight.localPosition.x - bottomLeft.localPosition.x;
+		float height = topRight.localPosition.z - bottomLeft.localPosition.z;
+
+		Vector2 distance = position - new Vector2(bottomLeft.localPosition.x,bottomLeft.localPosition.z);
+		float percX = distance.x / width;
+		float percY = distance.y / height;
+
+		return new Vector2 (percX * texture.width, percY * texture.height);
+	}
+
+	bool pointIsOnCanvas(Vector2 point) {
+		return point.x >= 0 && point.x <= texture.width &&
+			   point.y >= 0 && point.y <= texture.height;
+	}
+
+	void moveCursor () {
+		Vector3 oldPosition = cursor.transform.localPosition;
+		cursor.transform.localPosition = new Vector3((float)(oldPosition.x+accX*0.5),
+		                                             (float)(oldPosition.y),
+		                                             (float)(oldPosition.z+((accZ)*0.5)));
+	}
 	
 	void Awake ()
 	{	
 		isMousePressed = false;
+		zPressed = false;
 		
 		canvasMask = LayerMask.GetMask ("Canvas");
 		
@@ -108,34 +145,56 @@ public class DrawingManager : MonoBehaviour
 		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
 		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
 	}
-
+	
 	/* 
 	 * To use Wiimote, person should run DarwiinRemote and start recording into a file called
 	 * "wiimote.txt" in the SceneStudio directory. Once that is up and running, run this file
 	 * and the program will start reading coordinates from there.
 	 */
 	void Update()
-	{
-
-		//TODO: on mouse down, set the position of the cursor to the center
-		/* on right button down, start drawing 
-		 * 
-		 * make new point object that represents the mouse
-		 * have that mark where you are and move around when the wiimote changes acceleration
-		 * 
-		 * 
-		 * use acceleration to determine where to go
-		 */
-
+	{	
 		if (Input.GetKey (KeyCode.Z)) {
-			//place object in center of screen
-			getWiimoteCoords ();
+
+			if (!zPressed) {
+				//first time pressing Z, place cursor in center of canvas
+				cursor.transform.localPosition = new Vector3((float)-((cursor.GetComponent<Renderer>()).bounds.size.x/2),
+				                                             (float)0.1,
+				                                             (float)((cursor.GetComponent<Renderer>()).bounds.size.y/2));
+				cursor.GetComponent<Renderer>().enabled = true;
+				zPressed = true;
+			} else {
+				//Z has been pressed for a while start moving the cursor
+				getWiimoteCoords ();
+				moveCursor ();
+			}
 			if (Input.GetKey (KeyCode.X)) {
 				//start drawing
-				UnityEngine.Debug.Log ("x is pressed");
+				Vector2 newPoint = cursorOnCanvas();
+
+				if (pointIsOnCanvas(newPoint)) {
+					drawPoint (newPoint);
+
+					if (!xPressed) {
+						lastpoint = new Vector2 (newPoint.x, newPoint.y);
+						xPressed = true;
+					}
+					else {
+						for (float i = 0.0f; i < 1.0f; i+=0.02f) {
+							drawPoint(Vector2.Lerp(lastpoint, newPoint,i));
+						}
+						lastpoint = newPoint;
+					}
+					
+					texture.Apply();
+				}
 			}
 		}
-		
+		if (!Input.GetKey (KeyCode.Z)) {
+			//hide cursor
+			zPressed = false;
+			cursor.GetComponent<Renderer> ().enabled = false;
+		}
+		if (!Input.GetKey (KeyCode.X)) xPressed = false;
 		
 		if (Input.GetMouseButtonDown (0)) {
 			isMousePressed = true;
@@ -156,7 +215,6 @@ public class DrawingManager : MonoBehaviour
 				int y = (int) ((hitPoint.y - bottomLeft.position.y) * heightFactor);
 				Vector2 newPoint = new Vector2 (x, y);
 				drawPoint (newPoint);
-
 				if (initial) {
 					lastpoint = new Vector2 (newPoint.x, newPoint.y);
 					initial = false;
@@ -168,10 +226,10 @@ public class DrawingManager : MonoBehaviour
 				}
 
 				
-				//				while (lastpoint != newPoint) {
-//					drawPoint (lastpoint);
-//					lastpoint = Vector2.Lerp(lastpoint, newPoint, 0.5f);
-//				}
+				//while (lastpoint != newPoint) {
+				//	drawPoint (lastpoint);
+				//	lastpoint = Vector2.Lerp(lastpoint, newPoint, 0.5f);
+				//}
 				lastpoint = newPoint;
 
 				texture.Apply();
