@@ -23,6 +23,8 @@ public class DrawingManager : MonoBehaviour
 	public String[] twoDim;
 	public GameObject[] threeDim;
 	private Dictionary<String, GameObject> modelMap;
+	public float instantiateDistance = 5f;
+	private Vector3 instantiateVector;
 	
 	//for Wiimote
 	float calZ = -1;
@@ -155,6 +157,8 @@ public class DrawingManager : MonoBehaviour
 		for (int i = 0; i < twoDim.Length; i++) {
 			modelMap.Add (twoDim [i], threeDim [i]);
 		}
+
+		instantiateVector = new Vector3 (0.0f, 0.0f, instantiateDistance);
 	}
 	
 	/* 
@@ -263,11 +267,16 @@ public class DrawingManager : MonoBehaviour
 			
 			//Run through ml algorithm here
 			String output = "apple";
-			Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
-			Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
-			print (loc);
-			print (rot);
-			Instantiate(modelMap[output], loc, rot);
+			//Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
+			//Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
+			//print (loc);
+			//print (rot);
+			//print (Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector);
+			//Instantiate(modelMap[output], Quaternion.Euler(0.0f, rot.y * 100f, 0.0f) * instantiateVector, Quaternion.identity);
+			Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance; //loc + Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector;
+			//instantiateLoc.z = 5.0f;
+			instantiateLoc.y = 0.0f;
+			Instantiate(modelMap[output], instantiateLoc, Quaternion.identity);
 
 //			int size = texture.width * texture.height;
 //			Color[] array = texture.GetPixels ();
