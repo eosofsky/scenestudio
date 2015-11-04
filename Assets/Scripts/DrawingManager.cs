@@ -262,8 +262,8 @@ public class DrawingManager : MonoBehaviour
 						texture.SetPixel(x, y, Color.white);
 				}
 			}
-			byte [] bytes = texture.EncodeToJPG ();
-			File.WriteAllBytes ("testout.jpg", bytes);
+			byte [] bytes = texture.EncodeToPNG ();
+			File.WriteAllBytes ("testout.png", bytes);
 			
 			//Run through ml algorithm here
 			String output = "apple";
