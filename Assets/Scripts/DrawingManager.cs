@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Sprites;
-using System.IO;
 
 public class DrawingManager : MonoBehaviour
 {
@@ -31,12 +30,12 @@ public class DrawingManager : MonoBehaviour
 	float calX = -100;
 	float smooth = 20;
 	int lastLineWiiMote;
-	double oldAccX = 0, oldAccY = 0, oldAccZ = 0;
-	double accX = 0, accY = 0, accZ = 0;
+	float accX = 0, accY = 0, accZ = 0;
 	public GameObject cursor;
 	private bool zPressed;
 	private bool xPressed;
-	Quaternion rot; //for pointing to where cursor should go
+	public GameObject capsule;
+	private Plane canvasPlane;
 
 	void drawPoint(Vector2 point) {
 		int x = (int) point.x;
@@ -56,47 +55,33 @@ public class DrawingManager : MonoBehaviour
 
 		string coordinates = "wiimote.txt";
 		string coordinateFile = Path.GetFileName (coordinates);
-		string[] lines;
-		string[][] values;
+		string[] values;
 		
 		//gets the coordinates from the file outputted by DarwiinRemote
 		if (System.IO.File.Exists(coordinateFile)){ 
-			string txt;
 			
 			using (StreamReader sr = new StreamReader(coordinateFile)) {
 				//read two lines for the labels
 				sr.ReadLine();
 				sr.ReadLine();
 				//get the updated information
-				txt = sr.ReadToEnd();
-				lines = txt.Split(new string[] { "\n" }, StringSplitOptions.None);
-				values = new string[lines.Length][];
-				for (int i = 0; i < lines.Length; i++) {
-					values[i] = lines[i].Split(new string[] { "," }, StringSplitOptions.None);
-				}
-				
-				double tempX = double.Parse(values[values.Length-2][1],CultureInfo.InvariantCulture);
-				double tempY = double.Parse(values[values.Length-2][2],CultureInfo.InvariantCulture);
-				double tempZ = double.Parse(values[values.Length-2][3],CultureInfo.InvariantCulture);
-				
-				if (tempX == oldAccX && tempY == oldAccY && tempZ == oldAccZ) {
-					//no change, the wiimote probably disconnected
-					accX = 0; accY = 0; accZ = 0;
-				} else {
-					//changed, so update to the new accelerations
-					oldAccX = accX; oldAccY = accY; oldAccZ = accZ;
-					accX = tempX; accY = tempY; accZ = tempZ - calZ;
-				}
+				string[] txt = File.ReadAllLines(coordinateFile);
+				values = txt[txt.Length-2].Split (new[] { "," }, StringSplitOptions.None);
 
-				/*Quaternion target = Quaternion.Euler ((float)(calZ-accZ*3), (float)0, (float)0);
-				rot = Quaternion.Slerp (transform.rotation, target, Time.deltaTime*smooth);
-				Debug.Log(rot);*/
+				float tempX = float.Parse(values[1],CultureInfo.InvariantCulture);
+				float tempY = float.Parse(values[2],CultureInfo.InvariantCulture);
+				float tempZ = float.Parse(values[3],CultureInfo.InvariantCulture);
+
+				if (Math.Abs (accX - tempX) > 0.1) {
+					accX = tempX;
+				}
+				if (Math.Abs (accY - tempY) > 0.1) {
+					accY = tempY;
+				}
+				if (Math.Abs (accZ - tempZ) > 0.1) {
+					accZ = tempZ-calZ;
+  				}
 			}
-			
-			//using (StreamWriter sw = new StreamWriter(coordinates, false)) {
-			////refresh so that we won't read it in again next time
-			//sw.WriteLine("time,AccX,AccY,AccZ,pressureTR, pressureBR, pressureTL,");
-			//sw.WriteLine("pressureBL,rawPressureTR,rawPressureBR,rawPressureTL,rawPressureBL");
 		}
 		return 0;
 	}
@@ -125,11 +110,26 @@ public class DrawingManager : MonoBehaviour
 			   point.y >= 0 && point.y <= texture.height;
 	}
 
+	void rotateWiimote() {
+		float xAngle = -accY*10;
+		float yAngle = -accX*10;
+		
+		Quaternion ttarget = Quaternion.Euler (xAngle, yAngle, (float)0);
+		capsule.transform.localRotation = Quaternion.Slerp (capsule.transform.rotation, ttarget, Time.deltaTime*smooth);
+	}
+
 	void moveCursor () {
-		Vector3 oldPosition = cursor.transform.localPosition;
-		cursor.transform.localPosition = new Vector3((float)(oldPosition.x+accX*0.5),
-		                                             (float)(oldPosition.y),
-		                                             (float)(oldPosition.z+((accZ)*0.5)));
+		Vector3 vector2Project = capsule.transform.forward;
+		float distance;
+		Ray ray2Project = new Ray (capsule.GetComponent<Renderer> ().bounds.center, vector2Project);
+
+		if (canvasPlane.Raycast (ray2Project, out distance)) {
+			Vector3 point = ray2Project.GetPoint (distance);
+
+			Vector3 oldPosition = cursor.transform.localPosition;
+			Vector3 newPosition = new Vector3 ((float)point.x, (float)oldPosition.y, (float)point.z);
+			cursor.transform.localPosition = Vector3.Lerp (oldPosition, newPosition, (float)0.1);
+		}
 	}
 	
 	void Awake ()
@@ -159,6 +159,12 @@ public class DrawingManager : MonoBehaviour
 		}
 
 		instantiateVector = new Vector3 (0.0f, 0.0f, instantiateDistance);
+
+		capsule.transform.localPosition = new Vector3 (0, 0, 0); //put it at the camera
+		capsule.GetComponent<Renderer> ().enabled = false; //can't see it
+		Vector3 bottomRight = new Vector3 (topRight.localPosition.x,bottomLeft.localPosition.y,bottomLeft.localPosition.z);
+		canvasPlane = new Plane (topRight.localPosition, bottomRight, bottomLeft.localPosition);
+
 	}
 	
 	/* 
@@ -177,13 +183,17 @@ public class DrawingManager : MonoBehaviour
 				                                             (float)((cursor.GetComponent<Renderer>()).bounds.size.y/2));
 				cursor.GetComponent<Renderer>().enabled = true;
 				zPressed = true;
+
+
 			} else {
 				//Z has been pressed for a while start moving the cursor
 				getWiimoteCoords ();
+				rotateWiimote();
 				moveCursor ();
 			}
 			if (Input.GetKey (KeyCode.X)) {
 				//start drawing
+
 				Vector2 newPoint = cursorOnCanvas();
 
 				if (pointIsOnCanvas(newPoint)) {
