@@ -37,6 +37,9 @@ public class DrawingManager : MonoBehaviour
 	public GameObject capsule;
 	private Plane canvasPlane;
 
+	//predict
+	public GameObject predictor;
+
 	void drawPoint(Vector2 point) {
 		int x = (int) point.x;
 		int y = (int) point.y;
@@ -273,9 +276,12 @@ public class DrawingManager : MonoBehaviour
 				}
 			}
 			byte [] bytes = texture.EncodeToPNG ();
-			File.WriteAllBytes ("testout.png", bytes);
+			if (!Directory.Exists("images")) Directory.CreateDirectory ("images");
+			if (!Directory.Exists ("images/Output")) Directory.CreateDirectory("images/Output");
+			File.WriteAllBytes ("images/Output/0.png", bytes);
 			
 			//Run through ml algorithm here
+			predictor.GetComponent<Predict>().predicted = false;
 			String output = "apple";
 			//Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
 			//Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
