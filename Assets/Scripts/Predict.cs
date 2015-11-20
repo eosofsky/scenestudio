@@ -6,8 +6,10 @@ using System.Globalization;
 
 public class Predict : MonoBehaviour {
 	
+	public GameObject[] objects;
 	private string[] classifications = new string[11];
 	public bool predicted;
+	public float instantiateDistance = 5f;
 
 	void RunArt () {
 		System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -78,6 +80,9 @@ public class Predict : MonoBehaviour {
 				int predict = Prediction (prediction);
 				Debug.Log ("Predicted to be " + classifications [predict]);
 				//TODO: call other script to place the object or something
+				Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
+				instantiateLoc.y = 0.0f;
+				Instantiate(objects[predict], instantiateLoc, Quaternion.identity);
 
 				if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
 				File.Move (prediction,"blept.txt");

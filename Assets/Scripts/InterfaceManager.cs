@@ -11,18 +11,22 @@ public class InterfaceManager : MonoBehaviour {
 		canvas.SetActive (false);
 		canvasOpen = false;
 	}
-	
+
+	public void Toggle () {
+		if (canvasOpen) {
+			canvas.SetActive(false);
+			canvasOpen = false;
+		}
+		else {
+			canvas.SetActive(true);
+			canvasOpen = true;
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetButtonDown ("Submit")) {
-			if (canvasOpen) {
-				canvas.SetActive(false);
-				canvasOpen = false;
-			}
-			else {
-				canvas.SetActive(true);
-				canvasOpen = true;
-			}
+			Toggle ();
 		}
 	}
 }

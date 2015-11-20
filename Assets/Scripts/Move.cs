@@ -18,5 +18,7 @@ public class Move : MonoBehaviour {
 		if (newPos.y >= 0)
 			//newPos.y = transform.position//0;
 			transform.position = newPos;
+		else
+			print(newPos);
 	}
 }

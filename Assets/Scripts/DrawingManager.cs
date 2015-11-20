@@ -19,11 +19,7 @@ public class DrawingManager : MonoBehaviour
 	private float heightFactor;
 	private Vector2 lastpoint;
 	public Camera thisCamera;
-	public String[] twoDim;
-	public GameObject[] threeDim;
-	private Dictionary<String, GameObject> modelMap;
-	public float instantiateDistance = 5f;
-	private Vector3 instantiateVector;
+	private InterfaceManager interfaceManager;
 	
 	//for Wiimote
 	float calZ = -1;
@@ -38,7 +34,7 @@ public class DrawingManager : MonoBehaviour
 	private Plane canvasPlane;
 
 	//predict
-	public GameObject predictor;
+	private GameObject predictor;
 
 	void drawPoint(Vector2 point) {
 		int x = (int) point.x;
@@ -142,7 +138,7 @@ public class DrawingManager : MonoBehaviour
 		
 		canvasMask = LayerMask.GetMask ("Canvas");
 		
-		texture = new Texture2D(1000, 1000);
+		texture = new Texture2D(256, 256);
 		GetComponent<Renderer>().material.mainTexture = texture;
 		
 		clear ();
@@ -153,15 +149,9 @@ public class DrawingManager : MonoBehaviour
 		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
 		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
 
-		modelMap = new Dictionary<String, GameObject>();
-		if (twoDim.Length != threeDim.Length) {
-			print ("Error!");
-		}
-		for (int i = 0; i < twoDim.Length; i++) {
-			modelMap.Add (twoDim [i], threeDim [i]);
-		}
+		predictor = GameObject.FindGameObjectWithTag ("Predictor");
 
-		instantiateVector = new Vector3 (0.0f, 0.0f, instantiateDistance);
+		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent <InterfaceManager> ();
 
 		capsule.transform.localPosition = new Vector3 (0, 0, 0); //put it at the camera
 		capsule.GetComponent<Renderer> ().enabled = false; //can't see it
@@ -271,7 +261,7 @@ public class DrawingManager : MonoBehaviour
 			//Remove border
 			for (int y = 0; y < texture.height; y++) {
 				for (int x = 0; x < texture.width; x++) {
-					if (x < 5 || y < 8 || x > texture.width - 6 || y > texture.height - 9)
+					if (x < 1 || y < 2 || x > texture.width - 2 || y > texture.height - 3)
 						texture.SetPixel(x, y, Color.white);
 				}
 			}
@@ -282,17 +272,17 @@ public class DrawingManager : MonoBehaviour
 			
 			//Run through ml algorithm here
 			predictor.GetComponent<Predict>().predicted = false;
-			String output = "apple";
+			//String output = "apple";
 			//Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
 			//Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
 			//print (loc);
 			//print (rot);
 			//print (Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector);
 			//Instantiate(modelMap[output], Quaternion.Euler(0.0f, rot.y * 100f, 0.0f) * instantiateVector, Quaternion.identity);
-			Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance; //loc + Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector;
-			//instantiateLoc.z = 5.0f;
-			instantiateLoc.y = 0.0f;
-			Instantiate(modelMap[output], instantiateLoc, Quaternion.identity);
+//			Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance; //loc + Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector;
+//			//instantiateLoc.z = 5.0f;
+//			instantiateLoc.y = 0.0f;
+//			Instantiate(modelMap[output], instantiateLoc, Quaternion.identity);
 
 //			int size = texture.width * texture.height;
 //			Color[] array = texture.GetPixels ();
@@ -305,13 +295,16 @@ public class DrawingManager : MonoBehaviour
 //				vals[i*4+3] = pixel.a;
 //			}
 			//print ("here");
+
+			//close canvas
+			interfaceManager.Toggle ();
 		}
 	}
 	
 	public void clear () {
 		for (int y = 0; y < texture.height; y++) {
 			for (int x = 0; x < texture.width; x++) {
-				if (x < 5 || y < 8 || x > texture.width - 6 || y > texture.height - 9)
+				if (x < 1 || y < 2 || x > texture.width - 2 || y > texture.height - 3)
 					texture.SetPixel(x, y, Color.black);
 				else
 					texture.SetPixel(x, y, Color.white);
