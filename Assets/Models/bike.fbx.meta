@@ -1,0 +1,129 @@
+fileFormatVersion: 2
+guid: 65f3a0b0345044e46b12988f8bb97922
+timeCreated: 1448142288
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: BIKE__Frame
+    100004: BIKE_Chain
+    100006: BIKE_Front_Gear
+    100008: BIKE_Front_Wheel
+    100010: BIKE_Gear
+    100012: BIKE_Handlebars
+    100014: BIKE_Left_Pedal
+    100016: BIKE_Pedals
+    100018: BIKE_Rear_Gear
+    100020: BIKE_Rear_Wheel
+    100022: BIKE_Right_Pedal
+    100024: BIKE_Seat
+    400000: //RootNode
+    400002: BIKE__Frame
+    400004: BIKE_Chain
+    400006: BIKE_Front_Gear
+    400008: BIKE_Front_Wheel
+    400010: BIKE_Gear
+    400012: BIKE_Handlebars
+    400014: BIKE_Left_Pedal
+    400016: BIKE_Pedals
+    400018: BIKE_Rear_Gear
+    400020: BIKE_Rear_Wheel
+    400022: BIKE_Right_Pedal
+    400024: BIKE_Seat
+    2300000: BIKE__Frame
+    2300002: BIKE_Chain
+    2300004: BIKE_Front_Gear
+    2300006: BIKE_Front_Wheel
+    2300008: BIKE_Handlebars
+    2300010: BIKE_Left_Pedal
+    2300012: BIKE_Pedals
+    2300014: BIKE_Rear_Gear
+    2300016: BIKE_Rear_Wheel
+    2300018: BIKE_Right_Pedal
+    2300020: BIKE_Seat
+    3300000: BIKE__Frame
+    3300002: BIKE_Chain
+    3300004: BIKE_Front_Gear
+    3300006: BIKE_Front_Wheel
+    3300008: BIKE_Handlebars
+    3300010: BIKE_Left_Pedal
+    3300012: BIKE_Pedals
+    3300014: BIKE_Rear_Gear
+    3300016: BIKE_Rear_Wheel
+    3300018: BIKE_Right_Pedal
+    3300020: BIKE_Seat
+    4300000: BIKE_Handlebars
+    4300002: BIKE_Front_Wheel
+    4300004: BIKE_Rear_Wheel
+    4300006: BIKE__Frame
+    4300008: BIKE_Seat
+    4300010: BIKE_Pedals
+    4300012: BIKE_Right_Pedal
+    4300014: BIKE_Left_Pedal
+    4300016: BIKE_Rear_Gear
+    4300018: BIKE_Front_Gear
+    4300020: BIKE_Chain
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

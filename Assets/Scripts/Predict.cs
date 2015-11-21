@@ -80,9 +80,10 @@ public class Predict : MonoBehaviour {
 				int predict = Prediction (prediction);
 				Debug.Log ("Predicted to be " + classifications [predict]);
 				//TODO: call other script to place the object or something
+				GameObject obj = objects[predict];
 				Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
-				instantiateLoc.y = 0.0f;
-				Instantiate(objects[predict], instantiateLoc, Quaternion.identity);
+				instantiateLoc.y = obj.transform.position.y;
+				Instantiate(obj, instantiateLoc, obj.transform.rotation);//, Quaternion.identity);
 
 				if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
 				File.Move (prediction,"blept.txt");

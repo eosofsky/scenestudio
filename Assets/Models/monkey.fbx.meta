@@ -1,0 +1,196 @@
+fileFormatVersion: 2
+guid: 7c85beb19624844c88118af4b1b62138
+timeCreated: 1448142329
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: arm_l
+    100002: arm_r
+    100004: Armature
+    100006: Bone
+    100008: Bone.001
+    100010: Bone.002
+    100012: Bone.003
+    100014: Bone.004
+    100016: Bone.005
+    100018: Bone.006
+    100020: Bone.007
+    100022: Bone.007_end
+    100024: Bone.008
+    100026: Bone.009
+    100028: Bone.010
+    100030: Bone.012
+    100032: Bone.013
+    100034: Bone.014
+    100036: Bone.015
+    100038: Bone.015_end
+    100040: Bone.016
+    100042: Bone.017
+    100044: Bone.018
+    100046: Bone.020
+    100048: Bone.020_end
+    100050: Bone.021
+    100052: Bone.022
+    100054: Camera.001
+    100056: Cube
+    100058: foot_track_l
+    100060: foot_track_l_end
+    100062: foot_track_r
+    100064: foot_track_r_end
+    100066: hand_l
+    100068: hand_l_end
+    100070: hand_r
+    100072: hand_r_end
+    100074: head
+    100076: head 1
+    100078: head_end
+    100080: head_track
+    100082: head_track_end
+    100084: Lamp
+    100086: Lamp.001
+    100088: Lamp.002
+    100090: Lamp.003
+    100092: mid
+    100094: //RootNode
+    100096: Sphere
+    100098: Sphere.001
+    100100: Tail_track
+    100102: Tail_track_end
+    100104: track_l
+    100106: track_l_end
+    100108: track_r
+    100110: track_r_end
+    400000: arm_l
+    400002: arm_r
+    400004: Armature
+    400006: Bone
+    400008: Bone.001
+    400010: Bone.002
+    400012: Bone.003
+    400014: Bone.004
+    400016: Bone.005
+    400018: Bone.006
+    400020: Bone.007
+    400022: Bone.007_end
+    400024: Bone.008
+    400026: Bone.009
+    400028: Bone.010
+    400030: Bone.012
+    400032: Bone.013
+    400034: Bone.014
+    400036: Bone.015
+    400038: Bone.015_end
+    400040: Bone.016
+    400042: Bone.017
+    400044: Bone.018
+    400046: Bone.020
+    400048: Bone.020_end
+    400050: Bone.021
+    400052: Bone.022
+    400054: Camera.001
+    400056: Cube
+    400058: foot_track_l
+    400060: foot_track_l_end
+    400062: foot_track_r
+    400064: foot_track_r_end
+    400066: hand_l
+    400068: hand_l_end
+    400070: hand_r
+    400072: hand_r_end
+    400074: head
+    400076: head 1
+    400078: head_end
+    400080: head_track
+    400082: head_track_end
+    400084: Lamp
+    400086: Lamp.001
+    400088: Lamp.002
+    400090: Lamp.003
+    400092: mid
+    400094: //RootNode
+    400096: Sphere
+    400098: Sphere.001
+    400100: Tail_track
+    400102: Tail_track_end
+    400104: track_l
+    400106: track_l_end
+    400108: track_r
+    400110: track_r_end
+    2300000: head
+    2300002: mid
+    2300004: Sphere
+    2300006: Sphere.001
+    3300000: head
+    3300002: mid
+    3300004: Sphere
+    3300006: Sphere.001
+    4300000: head
+    4300002: mid
+    4300004: Sphere.001
+    4300006: Sphere
+    4300008: Cube
+    9500000: //RootNode
+    13700000: Cube
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
