@@ -11,7 +11,7 @@ public class Predict : MonoBehaviour {
 	public bool predicted;
 	public float instantiateDistance = 5f;
 
-	void RunArt () {
+	public void RunArt () {
 		System.Diagnostics.Process process = new System.Diagnostics.Process();
 		process.StartInfo.UseShellExecute = true;
 		process.StartInfo.FileName = "/bin/bash";
