@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System;
 using System.Globalization;
+using UnityEngine.UI;
 
 public class Predict : MonoBehaviour {
 	
@@ -10,6 +11,9 @@ public class Predict : MonoBehaviour {
 	private string[] classifications = new string[11];
 	public bool predicted;
 	public float instantiateDistance = 5f;
+	public Text txtRef;
+	public Image predictImage;
+
 
 	public void RunArt () {
 		System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -68,17 +72,34 @@ public class Predict : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void Update () {
 		if (!predicted) {
 			RunArt ();
 			predicted = true;
 		} else {
 			string prediction = Path.GetFileName ("prediction.txt");
-		
 			//gets the coordinates from the file outputted by DarwiinRemote
 			if (System.IO.File.Exists (prediction)) {
 				int predict = Prediction (prediction);
-				Debug.Log ("Predicted to be " + classifications [predict]);
+				string classification = classifications[predict];
+				Debug.Log ("Predicted to be " + classification);
+				//check
+
+
+
+
+				txtRef.text = ("add " + classification + " to scene?");
+
+				//Sprite newSprite =  Resources.Load <Sprite>(classification + "_2");
+				string spriteLoc = classification + "_2";
+				Sprite predSprite =  Resources.Load <Sprite>(spriteLoc);
+				if (predSprite){
+					predictImage.sprite = predSprite;
+				} else {
+					Debug.LogError("Sprite not found" + spriteLoc, this);
+				}
+				//if 
+				//predictImage.sprite = Resources.Load (classification + "2") as Sprite;
 				//TODO: call other script to place the object or something
 				GameObject obj = objects[predict];
 				Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
