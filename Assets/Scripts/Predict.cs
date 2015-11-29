@@ -85,7 +85,7 @@ public class Predict : MonoBehaviour {
 			if (System.IO.File.Exists (prediction)) {
 				int predict = Prediction (prediction);
 				string classification = classifications[predict];
-				//Debug.Log ("Predicted to be " + classification);
+				Debug.Log ("Predicted to be " + classification);
 				//Add predicted object to scene?
 				txtRef.text = ("add " + classification + " to scene?");
 				string spriteLoc = classification + "_2";
@@ -116,7 +116,7 @@ public class Predict : MonoBehaviour {
 		Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
 		instantiateLoc.y = obj.transform.position.y;
 		Instantiate(obj, instantiateLoc, obj.transform.rotation);
-		Debug.Log ("piggy", this);
+		//Debug.Log ("newobj", this);
 	}
 	
 	public void AddObject(int predict, string prediction) {
