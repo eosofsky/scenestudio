@@ -13,6 +13,7 @@ public class Predict : MonoBehaviour {
 	public float instantiateDistance = 5f;
 	public Text txtRef;
 	public Image predictImage;
+	public bool addModel;
 
 
 	public void RunArt () {
@@ -69,8 +70,10 @@ public class Predict : MonoBehaviour {
 		classifications [10] = "Apple";
 
 		predicted = true;
+		addModel = false;
 	}
-	
+
+
 	// Update is called once per frame
 	public void Update () {
 		if (!predicted) {
@@ -82,15 +85,9 @@ public class Predict : MonoBehaviour {
 			if (System.IO.File.Exists (prediction)) {
 				int predict = Prediction (prediction);
 				string classification = classifications[predict];
-				Debug.Log ("Predicted to be " + classification);
-				//check
-
-
-
-
+				//Debug.Log ("Predicted to be " + classification);
+				//Add predicted object to scene?
 				txtRef.text = ("add " + classification + " to scene?");
-
-				//Sprite newSprite =  Resources.Load <Sprite>(classification + "_2");
 				string spriteLoc = classification + "_2";
 				Sprite predSprite =  Resources.Load <Sprite>(spriteLoc);
 				if (predSprite){
@@ -98,17 +95,39 @@ public class Predict : MonoBehaviour {
 				} else {
 					Debug.LogError("Sprite not found" + spriteLoc, this);
 				}
-				//if 
-				//predictImage.sprite = Resources.Load (classification + "2") as Sprite;
-				//TODO: call other script to place the object or something
-				GameObject obj = objects[predict];
-				Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
-				instantiateLoc.y = obj.transform.position.y;
-				Instantiate(obj, instantiateLoc, obj.transform.rotation);//, Quaternion.identity);
-
-				if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
-				File.Move (prediction,"blept.txt");
+				//if correct, add
+				if (addModel) {
+					AddObject(predict, prediction);
+				} else {
+				//Debug.Log("said no", this);
+				} 
 			}
 		}
+	}
+	public void add()
+	{
+		addModel = true;
+	}
+	//add corrected object
+
+	public void newObject(int chosen)
+	{
+		GameObject obj = objects[chosen];
+		Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
+		instantiateLoc.y = obj.transform.position.y;
+		Instantiate(obj, instantiateLoc, obj.transform.rotation);
+		Debug.Log ("piggy", this);
+	}
+	
+	public void AddObject(int predict, string prediction) {
+		GameObject obj = objects[predict];
+		Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
+		instantiateLoc.y = obj.transform.position.y;
+		Instantiate(obj, instantiateLoc, obj.transform.rotation);//, Quaternion.identity);
+		
+		if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
+		File.Move (prediction,"blept.txt");
+		addModel = false;
+
 	}
 }
