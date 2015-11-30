@@ -41,14 +41,14 @@ public class ScaleScript : MonoBehaviour {
 
 	void MoveCursor () {
 		Vector3 newPosition = cursor.transform.localPosition;
-		newPosition.x -= wiimote.accX * 0.25f;
-		newPosition.z += wiimote.accY * 0.25f;
+		newPosition.x += wiimote.accX * 0.25f;
+		newPosition.y -= wiimote.accY * 0.25f;
 		cursor.transform.localPosition = Vector3.Slerp (cursor.transform.localPosition, newPosition, Time.deltaTime * 20);
 	}
 	
 	// Use this for initialization
 	void Start () {
-		cursor.transform.localPosition = new Vector3 (0, 0, 1);
+		cursor.transform.localPosition = new Vector3 (0, 0, 3);
 		
 		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict>();
 		wiimote = GameObject.FindGameObjectWithTag("Wiimote").GetComponent<WiimoteScript>();

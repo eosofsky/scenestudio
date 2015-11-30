@@ -22,7 +22,7 @@ public class InterfaceManager : MonoBehaviour {
 	public GameObject leftArrow;
 	public GameObject movement;
 	public List<GameObject> panelObjects;
-	public DrawingManager drawingManager;
+	private DrawingManager drawingManager;
 
 	private Predict predictor;
 	private int[] mapping;
@@ -121,7 +121,6 @@ public class InterfaceManager : MonoBehaviour {
 
 			//wrong model - B Button
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
-				Debug.Log ("blap");
 				wrongModel();
 				zPressed = true;
 			}
