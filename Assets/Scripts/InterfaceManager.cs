@@ -214,6 +214,8 @@ public class InterfaceManager : MonoBehaviour {
 	//either doesnt recognize, or player says model is wrong
 	public void wrongModel() {
 		wrongState.SetActive (true);
+		ChangeSelection (true);
+		ChangeSelection (false);
 		drawingState.SetActive (false);
 		pickState.SetActive (false);
 		systemState.SetActive (true);
