@@ -15,8 +15,7 @@ public class Predict : MonoBehaviour {
 	public float instantiateDistance = 5f;
 	public Text txtRef;
 	public Image predictImage;
-	public bool addModel;
-
+	public int mostRecentPrediction;
 
 	public void RunArt () {
 		System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -57,7 +56,6 @@ public class Predict : MonoBehaviour {
 		classifications [10] = "Apple";
 
 		predicted = true;
-		addModel = false;
 	}
 
 
@@ -68,6 +66,7 @@ public class Predict : MonoBehaviour {
 		if (System.IO.File.Exists (prediction)) {
 			//gets the predictions
 			int[] predict = Prediction (prediction);
+			mostRecentPrediction = predict[0];
 			string classification = classifications[predict[0]];
 			Debug.Log ("Predicted to be " + classification);
 
@@ -81,25 +80,18 @@ public class Predict : MonoBehaviour {
 				Debug.LogError("Sprite not found" + spriteLoc, this);
 			}
 
-			//if correct, add
-			if (addModel) {
-				AddObject(predict[0], prediction);
-			} else {
-				//TODO: allow them to select the correct one
-				//Debug.Log("said no", this);
-			} 
-
 			//make sure the prediction only runs once
 			if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
 			File.Move (prediction,"blept.txt");
 		}
 	}
+	
 	public void add()
 	{
-		addModel = true;
+		AddObject (mostRecentPrediction);
 	}
-	//add corrected object
 
+	//TODO: delete
 	public void newObject(int chosen)
 	{
 		GameObject obj = objects[chosen];
@@ -109,15 +101,12 @@ public class Predict : MonoBehaviour {
 		//Debug.Log ("newobj", this);
 	}
 	
-	public void AddObject(int predict, string prediction) {
+	public void AddObject(int predict) {
 		//place the object into the scene
 		GameObject obj = objects[predict];
 		objectsInScene.Add (obj);
 		Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
 		instantiateLoc.y = obj.transform.position.y;
 		Instantiate(obj, instantiateLoc, obj.transform.rotation);
-
-		addModel = false;
-
 	}
 }
