@@ -10,6 +10,7 @@ public class InterfaceManager : MonoBehaviour {
 	private bool submitPressed;
 	private bool leftPressed;
 	private bool rightPressed;
+	private bool zPressed;
 
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
@@ -77,6 +78,9 @@ public class InterfaceManager : MonoBehaviour {
 		if (!Input.GetKey (KeyCode.RightArrow)) {
 			rightPressed = false;
 		}
+		if (!Input.GetKey (KeyCode.Z)) {
+			zPressed = false;
+		}
 
 		//in the normal state
 		if (normalState.activeSelf) {
@@ -116,8 +120,10 @@ public class InterfaceManager : MonoBehaviour {
 			}
 
 			//wrong model - B Button
-			if (Input.GetKey (KeyCode.Z)) {
+			if (Input.GetKey (KeyCode.Z) && !zPressed) {
+				Debug.Log ("blap");
 				wrongModel();
+				zPressed = true;
 			}
 
 			//go back to drawing
@@ -130,19 +136,31 @@ public class InterfaceManager : MonoBehaviour {
 
 		//in the wrong state
 		if (wrongState.activeSelf) {
+			//switch selected objects
 			if (Input.GetKey (KeyCode.LeftArrow) && !leftPressed) {
 				leftPressed = true;
 				ChangeSelection(false);
 			}
-
 			if (Input.GetKey (KeyCode.RightArrow) && !rightPressed) {
 				rightPressed = true;
 				ChangeSelection (true);
 			}
 
+			//select the object
 			if (Input.GetKey (KeyCode.X)) {
 				close();
 				predictor.AddObject (mapping[selected]);
+			}
+
+			//ENTER - exit out of object placement mode (go back to normal)
+			if (Input.GetButtonDown ("Submit")) {
+				close ();
+			}
+
+			//B - go back to the object from before
+			if (Input.GetKey (KeyCode.Z) && !zPressed) {
+				doneDrawing ();
+				zPressed = true;
 			}
 		}
 
