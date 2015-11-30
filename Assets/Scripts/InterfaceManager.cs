@@ -64,8 +64,6 @@ public class InterfaceManager : MonoBehaviour {
 		systemState.SetActive (true);
 	}
 
-
-	
 	//either doesnt recognize, or player says model is wrong
 	public void wrongModel() {
 		wrongState.SetActive (true);
@@ -91,30 +89,5 @@ public class InterfaceManager : MonoBehaviour {
 		wrongState.SetActive (false);
 		addState.SetActive (false);
 		systemState.SetActive (false);
-		
 	}
 }
-
-
-
-	
-
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

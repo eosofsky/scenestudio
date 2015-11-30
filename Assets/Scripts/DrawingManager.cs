@@ -22,19 +22,13 @@ public class DrawingManager : MonoBehaviour
 	private InterfaceManager interfaceManager;
 	
 	//for Wiimote
-	float calZ = -1;
-	float calX = -100;
-	float smooth = 20;
-	int lastLineWiiMote;
-	float accX = 0, accY = 0, accZ = 0;
 	public GameObject cursor;
 	private bool zPressed;
 	private bool xPressed;
-	public GameObject capsule;
-	private Plane canvasPlane;
+	private WiimoteScript wiimote;
 
 	//predict
-	private GameObject predictor;
+	private Predict predictor;
 
 	void drawPoint(Vector2 point) {
 		int x = (int) point.x;
@@ -48,41 +42,6 @@ public class DrawingManager : MonoBehaviour
 		texture.SetPixel(x+1, y-1, Color.black);
 		texture.SetPixel(x+1, y, Color.black);
 		texture.SetPixel(x+1, y+1, Color.black);
-	}
-
-	int getWiimoteCoords() {
-
-		string coordinates = "wiimote.txt";
-		string coordinateFile = Path.GetFileName (coordinates);
-		string[] values;
-		
-		//gets the coordinates from the file outputted by DarwiinRemote
-		if (System.IO.File.Exists(coordinateFile)){ 
-			
-			using (StreamReader sr = new StreamReader(coordinateFile)) {
-				//read two lines for the labels
-				sr.ReadLine();
-				sr.ReadLine();
-				//get the updated information
-				string[] txt = File.ReadAllLines(coordinateFile);
-				values = txt[txt.Length-2].Split (new[] { "," }, StringSplitOptions.None);
-
-				float tempX = float.Parse(values[1],CultureInfo.InvariantCulture);
-				float tempY = float.Parse(values[2],CultureInfo.InvariantCulture);
-				float tempZ = float.Parse(values[3],CultureInfo.InvariantCulture);
-
-				if (Math.Abs (accX - tempX) > 0.1) {
-					accX = tempX;
-				}
-				if (Math.Abs (accY - tempY) > 0.1) {
-					accY = tempY;
-				}
-				if (Math.Abs (accZ - tempZ) > 0.1) {
-					accZ = tempZ-calZ;
-  				}
-			}
-		}
-		return 0;
 	}
 
 	Vector2 cursorTarget () {
@@ -109,26 +68,11 @@ public class DrawingManager : MonoBehaviour
 			   point.y >= 0 && point.y <= texture.height;
 	}
 
-	void rotateWiimote() {
-		float xAngle = -accY*10;
-		float yAngle = -accX*10;
-		
-		Quaternion ttarget = Quaternion.Euler (xAngle, yAngle, (float)0);
-		capsule.transform.localRotation = Quaternion.Slerp (capsule.transform.rotation, ttarget, Time.deltaTime*smooth);
-	}
-
 	void moveCursor () {
-		Vector3 vector2Project = capsule.transform.forward;
-		float distance;
-		Ray ray2Project = new Ray (capsule.GetComponent<Renderer> ().bounds.center, vector2Project);
-
-		if (canvasPlane.Raycast (ray2Project, out distance)) {
-			Vector3 point = ray2Project.GetPoint (distance);
-
-			Vector3 oldPosition = cursor.transform.localPosition;
-			Vector3 newPosition = new Vector3 ((float)point.x, (float)oldPosition.y, (float)point.z);
-			cursor.transform.localPosition = Vector3.Lerp (oldPosition, newPosition, (float)0.1);
-		}
+		Vector3 newPosition = cursor.transform.localPosition;
+		newPosition.x -= wiimote.accX * 0.25f;
+		newPosition.z += wiimote.accY * 0.25f;
+		cursor.transform.localPosition = Vector3.Slerp (cursor.transform.localPosition, newPosition, Time.deltaTime * 20);
 	}
 	
 	void Awake ()
@@ -149,22 +93,11 @@ public class DrawingManager : MonoBehaviour
 		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
 		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
 
-		predictor = GameObject.FindGameObjectWithTag ("Predictor");
-
+		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict>();
 		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent <InterfaceManager> ();
-
-		capsule.transform.localPosition = new Vector3 (0, 0, 0); //put it at the camera
-		capsule.GetComponent<Renderer> ().enabled = false; //can't see it
-		Vector3 bottomRight = new Vector3 (topRight.localPosition.x,bottomLeft.localPosition.y,bottomLeft.localPosition.z);
-		canvasPlane = new Plane (topRight.localPosition, bottomRight, bottomLeft.localPosition);
-
+		wiimote = GameObject.FindGameObjectWithTag ("Wiimote").GetComponent<WiimoteScript> ();
 	}
-	
-	/* 
-	 * To use Wiimote, person should run DarwiinRemote and start recording into a file called
-	 * "wiimote.txt" in the SceneStudio directory. Once that is up and running, run this file
-	 * and the program will start reading coordinates from there.
-	 */
+
 	void Update()
 	{	
 		if (Input.GetKey (KeyCode.Z)) {
@@ -180,8 +113,6 @@ public class DrawingManager : MonoBehaviour
 
 			} else {
 				//Z has been pressed for a while start moving the cursor
-				getWiimoteCoords ();
-				rotateWiimote();
 				moveCursor ();
 			}
 			if (Input.GetKey (KeyCode.X)) {
@@ -271,7 +202,7 @@ public class DrawingManager : MonoBehaviour
 			File.WriteAllBytes ("images/Output/0.png", bytes);
 			
 			//Run through ml algorithm here
-			predictor.GetComponent<Predict>().predicted = false;
+			predictor.predicted = false;
 			//String output = "apple";
 			//Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
 			//Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);

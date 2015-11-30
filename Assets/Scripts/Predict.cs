@@ -4,10 +4,12 @@ using System.IO;
 using System;
 using System.Globalization;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class Predict : MonoBehaviour {
 	
 	public GameObject[] objects;
+	public List<GameObject> objectsInScene;
 	private string[] classifications = new string[11];
 	public bool predicted;
 	public float instantiateDistance = 5f;
@@ -25,34 +27,19 @@ public class Predict : MonoBehaviour {
 		process.Start ();
 	}
 
-	int Prediction (string prediction) {
-		int final = 0;
-
+	int[] Prediction (string prediction) {
+		int[] values = new int[3];
 		using (StreamReader sr = new StreamReader(prediction)) {
+			
 			string[] txt = File.ReadAllLines(prediction);
-			int[] values = new int[11];
-
-			for (int i = 0; i < values.Length; i++) {
-				values[i] = 0;
-			}
-
-			//get all predictions
-			for (int i = 0; i < txt.Length/2; i++) {
-				int p = int.Parse(txt[i],CultureInfo.InvariantCulture);
-				values[p]++;
-			}
-
-			//get mode
-			int max = 0;
-			for (int i = 0; i < values.Length; i++) {
-				if (values[i] > max) {
-					final = i;
-					max = values[i];
-				}
+			
+			//get the top 3 classifications
+			for (int i = 0; i < 3; i++) {
+				values[i] = int.Parse(txt[i],CultureInfo.InvariantCulture);
 			}
 		}
-
-		return final;
+		
+		return values;
 	}
 
 	// Use this for initialization
@@ -81,12 +68,14 @@ public class Predict : MonoBehaviour {
 			predicted = true;
 		} else {
 			string prediction = Path.GetFileName ("prediction.txt");
-			//gets the coordinates from the file outputted by DarwiinRemote
+
 			if (System.IO.File.Exists (prediction)) {
-				int predict = Prediction (prediction);
-				string classification = classifications[predict];
+				//gets the predictions
+				int[] predict = Prediction (prediction);
+				string classification = classifications[predict[0]];
 				Debug.Log ("Predicted to be " + classification);
-				//Add predicted object to scene?
+
+				//add predicted object to scene?
 				txtRef.text = ("add " + classification + " to scene?");
 				string spriteLoc = classification + "_2";
 				Sprite predSprite =  Resources.Load <Sprite>(spriteLoc);
@@ -95,12 +84,18 @@ public class Predict : MonoBehaviour {
 				} else {
 					Debug.LogError("Sprite not found" + spriteLoc, this);
 				}
+
 				//if correct, add
 				if (addModel) {
-					AddObject(predict, prediction);
+					AddObject(predict[0], prediction);
 				} else {
-				//Debug.Log("said no", this);
+					//TODO: allow them to select the correct one
+					//Debug.Log("said no", this);
 				} 
+
+				//make sure the prediction only runs once
+				if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
+				File.Move (prediction,"blept.txt");
 			}
 		}
 	}
@@ -120,13 +115,13 @@ public class Predict : MonoBehaviour {
 	}
 	
 	public void AddObject(int predict, string prediction) {
+		//place the object into the scene
 		GameObject obj = objects[predict];
+		objectsInScene.Add (obj);
 		Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
 		instantiateLoc.y = obj.transform.position.y;
-		Instantiate(obj, instantiateLoc, obj.transform.rotation);//, Quaternion.identity);
-		
-		if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
-		File.Move (prediction,"blept.txt");
+		Instantiate(obj, instantiateLoc, obj.transform.rotation);
+
 		addModel = false;
 
 	}
