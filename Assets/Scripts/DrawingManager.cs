@@ -20,6 +20,7 @@ public class DrawingManager : MonoBehaviour
 	private Vector2 lastpoint;
 	public Camera thisCamera;
 	private InterfaceManager interfaceManager;
+	public bool empty;
 	
 	//for Wiimote
 	public GameObject cursor;
@@ -138,6 +139,7 @@ public class DrawingManager : MonoBehaviour
 					}
 					
 					texture.Apply();
+					empty = false;
 				}
 			}
 		}
@@ -185,6 +187,7 @@ public class DrawingManager : MonoBehaviour
 				lastpoint = newPoint;
 
 				texture.Apply();
+				empty = false;
 			}
 			else {
 				initial = true;
@@ -218,6 +221,7 @@ public class DrawingManager : MonoBehaviour
 			}
 		}
 		texture.Apply();
+		empty = true;
 	}
 
 	void OnEnable () {

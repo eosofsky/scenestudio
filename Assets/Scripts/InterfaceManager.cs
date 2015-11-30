@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class InterfaceManager : MonoBehaviour {
@@ -9,7 +10,6 @@ public class InterfaceManager : MonoBehaviour {
 	private bool submitPressed;
 	private bool leftPressed;
 	private bool rightPressed;
-	private float panelWidth;
 
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
@@ -18,9 +18,13 @@ public class InterfaceManager : MonoBehaviour {
 	public GameObject systemState; //drawingsystem
 	public Image predictedImage; //image that displays what was predicted
 	public GameObject panel; //array of other objects
+	public GameObject leftArrow;
 	public GameObject movement;
+	public List<GameObject> panelObjects;
+	public DrawingManager drawingManager;
 
 	private Predict predictor;
+	private int[] mapping;
 
 	private int selected; //for the pick state
 	
@@ -37,8 +41,17 @@ public class InterfaceManager : MonoBehaviour {
 
 		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict> ();
 
-		RectTransform panelRect = panel.GetComponent<RectTransform> ();
-		panelWidth = panelRect.rect.xMax - panelRect.rect.xMin;
+		mapping = new int[10];
+		mapping [0] = 4;
+		mapping [1] = 6;
+		mapping [2] = 5;
+		mapping [3] = 8;
+		mapping [4] = 10;
+		mapping [5] = 1;
+		mapping [6] = 2;
+		mapping [7] = 3;
+		mapping [8] = 7;
+		mapping [9] = 9;
 	}
 
 	public void Toggle () {
@@ -86,7 +99,7 @@ public class InterfaceManager : MonoBehaviour {
 			}
 
 			//submit drawing
-			if (Input.GetButtonDown ("Cancel")) {
+			if (Input.GetButtonDown ("Cancel") && !drawingManager.empty) {
 				doneDrawing ();
 				canvas.GetComponent<DrawingManager>().SaveImage();
 				predictor.RunArt();
@@ -117,14 +130,19 @@ public class InterfaceManager : MonoBehaviour {
 
 		//in the wrong state
 		if (wrongState.activeSelf) {
-			if (Input.GetKey (KeyCode.LeftArrow)) {
+			if (Input.GetKey (KeyCode.LeftArrow) && !leftPressed) {
 				leftPressed = true;
 				ChangeSelection(false);
 			}
 
-			if (Input.GetKey (KeyCode.RightArrow)) {
+			if (Input.GetKey (KeyCode.RightArrow) && !rightPressed) {
 				rightPressed = true;
 				ChangeSelection (true);
+			}
+
+			if (Input.GetKey (KeyCode.X)) {
+				close();
+				predictor.AddObject (mapping[selected]);
 			}
 		}
 
@@ -136,11 +154,12 @@ public class InterfaceManager : MonoBehaviour {
 		} else {
 			selected = (selected - 1 + 10) % 10;
 		}
+		Debug.Log ("selected is " + selected);
 
 		RectTransform rect = panel.GetComponent<RectTransform> ();
-		Vector3 pos = rect.position;
-		pos.x = -345f;
-		panel.GetComponent<RectTransform> ().position = pos;
+		Vector3 pos = rect.anchoredPosition;
+		pos.x = 495f - (selected*200f*0.79201f);
+		panel.GetComponent<RectTransform> ().anchoredPosition = pos;
 	}
 
 	//pull up canvas when draw button is clicked
@@ -151,6 +170,7 @@ public class InterfaceManager : MonoBehaviour {
 		pickState.SetActive (false);
 		drawingState.SetActive (true);
 		systemState.SetActive (true);
+		drawingManager = GameObject.FindGameObjectWithTag ("Drawing Manager").GetComponent<DrawingManager> ();
 	}
 	
 	//call algorithm, open add state
