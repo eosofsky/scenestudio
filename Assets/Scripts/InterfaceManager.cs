@@ -186,7 +186,7 @@ public class InterfaceManager : MonoBehaviour {
 
 		RectTransform rect = panel.GetComponent<RectTransform> ();
 		Vector3 pos = rect.anchoredPosition;
-		pos.x = 495f - (selected*200f*0.79201f);
+		pos.x = 645f - (selected*200f*0.79201f);
 		panel.GetComponent<RectTransform> ().anchoredPosition = pos;
 	}
 
