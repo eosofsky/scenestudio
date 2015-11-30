@@ -11,6 +11,7 @@ public class InterfaceManager : MonoBehaviour {
 	private bool leftPressed;
 	private bool rightPressed;
 	private bool zPressed;
+	private bool escPressed;
 
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
@@ -81,6 +82,9 @@ public class InterfaceManager : MonoBehaviour {
 		if (!Input.GetKey (KeyCode.Z)) {
 			zPressed = false;
 		}
+		if (!Input.GetButton ("Cancel")) {
+			escPressed = false;
+		}
 
 		//in the normal state
 		if (normalState.activeSelf) {
@@ -103,7 +107,8 @@ public class InterfaceManager : MonoBehaviour {
 			}
 
 			//submit drawing
-			if (Input.GetButtonDown ("Cancel") && !drawingManager.empty) {
+			if (Input.GetButtonDown ("Cancel") && !drawingManager.empty && !escPressed) {
+				escPressed = true;
 				doneDrawing ();
 				canvas.GetComponent<DrawingManager>().SaveImage();
 				predictor.RunArt();
@@ -126,10 +131,16 @@ public class InterfaceManager : MonoBehaviour {
 			}
 
 			//go back to drawing
-			if (Input.GetButtonDown ("Submit") && !submitPressed) {
-				submitPressed = true;
+			if (Input.GetButtonDown ("Cancel") && !escPressed) {
+				escPressed = true;
 				draw ();
 				predictedImage.sprite = Resources.Load <Sprite>("default");
+			}
+
+			//go back to normal
+			if (Input.GetButtonDown("Submit") && !submitPressed) {
+				submitPressed = true;
+				close ();
 			}
 		}
 

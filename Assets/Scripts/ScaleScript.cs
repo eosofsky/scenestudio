@@ -59,19 +59,16 @@ public class ScaleScript : MonoBehaviour {
 		if (Input.GetKey (KeyCode.Z)) {
 			
 			if (!zPressed) {
-				//TODO: make the cursor appear and move around
 				//first time pressing Z, place cursor in center of canvas
 				cursor.transform.localPosition = new Vector3((float)-((cursor.GetComponent<Renderer>()).bounds.size.x/2),
 				                                             (float)0.1,
 				                                             (float)((cursor.GetComponent<Renderer>()).bounds.size.y/2));
-				cursor.GetComponent<Renderer>().enabled = true;
+				//cursor.GetComponent<Renderer>().enabled = true;
 				zPressed = true;
-				
-				
 			} else {
 				//Z has been pressed for a while start moving the cursor
 				//TODO: move the cursor around
-				MoveCursor ();
+				//MoveCursor ();
 			}
 			if (Input.GetKey (KeyCode.X)) {
 				//TODO: select an object - raycast to collide with an object
