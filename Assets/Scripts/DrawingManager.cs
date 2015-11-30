@@ -100,6 +100,7 @@ public class DrawingManager : MonoBehaviour
 
 	void Update()
 	{	
+		//B BUTTON
 		if (Input.GetKey (KeyCode.Z)) {
 
 			if (!zPressed) {
@@ -115,6 +116,8 @@ public class DrawingManager : MonoBehaviour
 				//Z has been pressed for a while start moving the cursor
 				moveCursor ();
 			}
+
+			//A BUTTON
 			if (Input.GetKey (KeyCode.X)) {
 				//start drawing
 
@@ -187,49 +190,22 @@ public class DrawingManager : MonoBehaviour
 				initial = true;
 			}
 		}
-		
-		if (Input.GetButton ("Cancel")) {
-			//Remove border
-			for (int y = 0; y < texture.height; y++) {
-				for (int x = 0; x < texture.width; x++) {
-					if (x < 1 || y < 2 || x > texture.width - 2 || y > texture.height - 3)
-						texture.SetPixel(x, y, Color.white);
-				}
+	}
+
+	public void SaveImage() {
+		//remove border
+		for (int y = 0; y < texture.height; y++) {
+			for (int x = 0; x < texture.width; x++) {
+				if (x < 1 || y < 2 || x > texture.width - 2 || y > texture.height - 3)
+					texture.SetPixel(x, y, Color.white);
 			}
-			byte [] bytes = texture.EncodeToPNG ();
-			if (!Directory.Exists("images")) Directory.CreateDirectory ("images");
-			if (!Directory.Exists ("images/Output")) Directory.CreateDirectory("images/Output");
-			File.WriteAllBytes ("images/Output/0.png", bytes);
-			
-			//Run through ml algorithm here
-			predictor.predicted = false;
-			//String output = "apple";
-			//Vector3 loc = UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye);
-			//Quaternion rot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
-			//print (loc);
-			//print (rot);
-			//print (Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector);
-			//Instantiate(modelMap[output], Quaternion.Euler(0.0f, rot.y * 100f, 0.0f) * instantiateVector, Quaternion.identity);
-//			Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance; //loc + Quaternion.Euler(0.0f, rot.y, 0.0f) * instantiateVector;
-//			//instantiateLoc.z = 5.0f;
-//			instantiateLoc.y = 0.0f;
-//			Instantiate(modelMap[output], instantiateLoc, Quaternion.identity);
-
-//			int size = texture.width * texture.height;
-//			Color[] array = texture.GetPixels ();
-//			float[] vals = new float[size * 4];
-//			for (int i = 0; i < size; i++) {
-//				Color pixel = array[i];
-//				vals[i*4] = pixel.r;
-//				vals[i*4+1] = pixel.g;
-//				vals[i*4+2] = pixel.b;
-//				vals[i*4+3] = pixel.a;
-//			}
-			//print ("here");
-
-			//close canvas
-			interfaceManager.Toggle ();
 		}
+
+		//save the image
+		byte [] bytes = texture.EncodeToPNG ();
+		if (!Directory.Exists("images")) Directory.CreateDirectory ("images");
+		if (!Directory.Exists ("images/Output")) Directory.CreateDirectory("images/Output");
+		File.WriteAllBytes ("images/Output/0.png", bytes);
 	}
 	
 	public void clear () {

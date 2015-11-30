@@ -5,6 +5,7 @@ public class InterfaceManager : MonoBehaviour {
 
 	public GameObject canvas;
 	private bool canvasOpen;
+	private bool submitPressed;
 
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
@@ -12,7 +13,8 @@ public class InterfaceManager : MonoBehaviour {
 	public GameObject wrongState; //what model did you mean?
 	public GameObject addState; //add selected model??
 	public GameObject systemState; //drawingsystem
-	
+
+	private Predict predictor;
 	
 	// Use this for initialization
 	void Start () {
@@ -25,6 +27,8 @@ public class InterfaceManager : MonoBehaviour {
 		systemState.SetActive (false);
 		
 		canvasOpen = false;
+
+		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict> ();
 	}
 
 	public void Toggle () {
@@ -40,9 +44,39 @@ public class InterfaceManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown ("Submit")) {
-			Toggle ();
+		if (!Input.GetButton ("Submit")) {
+			submitPressed = false;
 		}
+
+		//in the normal state
+		if (normalState.activeSelf) {
+			//start drawing
+			if (Input.GetButtonDown ("Submit") && !submitPressed) {
+				submitPressed = true;
+				draw ();
+			}
+		}
+
+		//in the drawing state
+		if (drawingState.activeSelf) {
+			//stop drawing
+			if (Input.GetButtonDown ("Submit") && !submitPressed) {
+				submitPressed = true;
+				close ();
+			}
+
+			//submit drawing
+			if (Input.GetButtonDown ("Cancel")) {
+				doneDrawing ();
+				canvas.GetComponent<DrawingManager>().SaveImage();
+				predictor.RunArt();
+			}
+		}
+
+		//in the pick state
+
+
+
 	}
 	//pull up canvas when draw button is clicked
 	public void draw() {

@@ -63,40 +63,35 @@ public class Predict : MonoBehaviour {
 
 	// Update is called once per frame
 	public void Update () {
-		if (!predicted) {
-			RunArt ();
-			predicted = true;
-		} else {
-			string prediction = Path.GetFileName ("prediction.txt");
+		string prediction = Path.GetFileName ("prediction.txt");
 
-			if (System.IO.File.Exists (prediction)) {
-				//gets the predictions
-				int[] predict = Prediction (prediction);
-				string classification = classifications[predict[0]];
-				Debug.Log ("Predicted to be " + classification);
+		if (System.IO.File.Exists (prediction)) {
+			//gets the predictions
+			int[] predict = Prediction (prediction);
+			string classification = classifications[predict[0]];
+			Debug.Log ("Predicted to be " + classification);
 
-				//add predicted object to scene?
-				txtRef.text = ("add " + classification + " to scene?");
-				string spriteLoc = classification + "_2";
-				Sprite predSprite =  Resources.Load <Sprite>(spriteLoc);
-				if (predSprite){
-					predictImage.sprite = predSprite;
-				} else {
-					Debug.LogError("Sprite not found" + spriteLoc, this);
-				}
-
-				//if correct, add
-				if (addModel) {
-					AddObject(predict[0], prediction);
-				} else {
-					//TODO: allow them to select the correct one
-					//Debug.Log("said no", this);
-				} 
-
-				//make sure the prediction only runs once
-				if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
-				File.Move (prediction,"blept.txt");
+			//add predicted object to scene?
+			txtRef.text = ("add " + classification + " to scene?");
+			string spriteLoc = classification + "_2";
+			Sprite predSprite =  Resources.Load <Sprite>(spriteLoc);
+			if (predSprite){
+				predictImage.sprite = predSprite;
+			} else {
+				Debug.LogError("Sprite not found" + spriteLoc, this);
 			}
+
+			//if correct, add
+			if (addModel) {
+				AddObject(predict[0], prediction);
+			} else {
+				//TODO: allow them to select the correct one
+				//Debug.Log("said no", this);
+			} 
+
+			//make sure the prediction only runs once
+			if (System.IO.File.Exists ("blept.txt")) File.Delete ("blept.txt");
+			File.Move (prediction,"blept.txt");
 		}
 	}
 	public void add()

@@ -4,11 +4,11 @@ using System.IO;
 using System.Globalization;
 using System;
 
-
 public class WiimoteScript : MonoBehaviour {
 	private float calZ = -1;
 	private int lastLineWiiMote;
 	public float accX = 0, accY = 0, accZ = 0;
+	private InterfaceManager interfaceManager;
 
 	public void getWiimoteCoords() {
 		string coordinates = "wiimote.txt";
@@ -45,7 +45,7 @@ public class WiimoteScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent<InterfaceManager>();
 	}
 	
 	// Update is called once per frame
