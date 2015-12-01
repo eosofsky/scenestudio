@@ -8,6 +8,7 @@ public class ScaleScript : MonoBehaviour {
 	private GameObject selectedObject;
 	private Predict predictor;
 	private WiimoteScript wiimote;
+	private int mode;
 	
 	public GameObject cursor;
 	
@@ -24,11 +25,16 @@ public class ScaleScript : MonoBehaviour {
 	
 	/* These functions all assume that there is already a selected object. */
 	void Scale () {
+		//make bigger
 		Vector3 scale = selectedObject.transform.localScale;
-		float accY = wiimote.accY;
-		
-		//scale += accY;
+		float m = wiimote.accY * 0.25f;
+		scale += new Vector3(m,m,m);
 		selectedObject.transform.localScale = scale;
+
+		//reposition on the y-axis so not underground
+		Vector3 pos = selectedObject.transform.position;
+		pos.y = selectedObject.GetComponent<Renderer> ().bounds.size.y/2;
+		selectedObject.transform.position = pos;
 	}
 	
 	//Ray casting?
@@ -45,6 +51,10 @@ public class ScaleScript : MonoBehaviour {
 		newPosition.y -= wiimote.accY * 0.25f;
 		cursor.transform.localPosition = Vector3.Slerp (cursor.transform.localPosition, newPosition, Time.deltaTime * 20);
 	}
+
+	public void ChangeSelectedObject(GameObject obj) {
+		selectedObject = obj;
+	}
 	
 	// Use this for initialization
 	void Start () {
@@ -56,30 +66,8 @@ public class ScaleScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKey (KeyCode.Z)) {
-			
-			if (!zPressed) {
-				//first time pressing Z, place cursor in center of canvas
-				cursor.transform.localPosition = new Vector3((float)-((cursor.GetComponent<Renderer>()).bounds.size.x/2),
-				                                             (float)0.1,
-				                                             (float)((cursor.GetComponent<Renderer>()).bounds.size.y/2));
-				//cursor.GetComponent<Renderer>().enabled = true;
-				zPressed = true;
-			} else {
-				//Z has been pressed for a while start moving the cursor
-				//TODO: move the cursor around
-				//MoveCursor ();
-			}
-			if (Input.GetKey (KeyCode.X)) {
-				//TODO: select an object - raycast to collide with an object
-			}
+		//if there is a selected object, do something
+		if (selectedObject) {
 		}
-		if (!Input.GetKey (KeyCode.Z)) {
-			//TODO: deselect the object
-			//hide cursor
-			zPressed = false;
-			cursor.GetComponent<Renderer> ().enabled = false;
-		}
-		if (!Input.GetKey (KeyCode.X)) xPressed = false;
 	}
 }
