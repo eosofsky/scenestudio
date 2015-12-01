@@ -42,7 +42,7 @@ public class ScaleScript : MonoBehaviour {
 
 		//reposition on the y-axis so not underground
 		Vector3 pos = selectedObject.transform.position;
-		pos.y = (selectedObject.GetComponent<Mesh>().bounds.size.y*selectedObject.transform.localScale.y)/2;
+		pos.y = (selectedObject.GetComponent<Collider>().bounds.size.y*selectedObject.transform.localScale.y)/2;
 		selectedObject.transform.position = pos;
 	}
 
@@ -99,6 +99,7 @@ public class ScaleScript : MonoBehaviour {
 		} else {
 			mode = (mode - 1 + 3) % 3;
 		}
+		Debug.Log ("change mode " + mode);
 		justStarted = true;
 	}
 	
@@ -128,16 +129,19 @@ public class ScaleScript : MonoBehaviour {
 
 			//delete object
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
+				Debug.Log ("B button/Z pressed");
 				zPressed = true;
 				Delete ();
 			}
 
 			//change modes
 			if (Input.GetKey (KeyCode.O) && !oPressed) {
+				Debug.Log ("- pressed");
 				oPressed = true;
 				ChangeMode(false);
 			}
 			if (Input.GetKey (KeyCode.P) && !pPressed) {
+				Debug.Log ("+ pressed");
 				pPressed = true;
 				ChangeMode(true);
 			}
