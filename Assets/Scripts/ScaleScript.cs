@@ -9,6 +9,8 @@ public class ScaleScript : MonoBehaviour {
 	private int mode;
 	private bool justStarted;
 	private bool zPressed;
+	private bool oPressed;
+	private bool pPressed;
 
 	private Vector3 initialPos;
 	private Vector3 center;
@@ -29,11 +31,13 @@ public class ScaleScript : MonoBehaviour {
 	void Scale () {
 		justStarted = false;
 
-		//make bigger
+		//make bigger - with minimum and maximum scales
 		Vector3 scale = selectedObject.transform.localScale;
 		float m = wiimote.accY * 0.25f;
 		scale += new Vector3(m,m,m);
-		selectedObject.transform.localScale = scale;
+		if (scale.x > 0.25f && scale.x < 3f) {
+			selectedObject.transform.localScale = scale;
+		}
 
 		//reposition on the y-axis so not underground
 		Vector3 pos = selectedObject.transform.position;
@@ -119,11 +123,26 @@ public class ScaleScript : MonoBehaviour {
 					break;
 			}
 
+			//delete object
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
 				zPressed = true;
 				Delete ();
 			}
+
+			//change modes
+			if (Input.GetKey (KeyCode.O) && !oPressed) {
+				oPressed = true;
+				ChangeMode(false);
+			}
+			if (Input.GetKey (KeyCode.P) && !pPressed) {
+				pPressed = true;
+				ChangeMode(true);
+			}
+
+
 			if (!Input.GetKey (KeyCode.Z)) zPressed = false;
+			if (!Input.GetKey (KeyCode.O)) oPressed = false;
+			if (!Input.GetKey (KeyCode.P)) pPressed = false;
 		}
 	}
 }
