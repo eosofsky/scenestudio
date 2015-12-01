@@ -23,12 +23,13 @@ public class Selection : MonoBehaviour {
 		scaleScript = gameObject.GetComponent <ScaleScript> ();
 	}
 
-	public void ToggleSelect() {
+	public bool ToggleSelect() {
 		selectingMode = !selectingMode;
 		if (!selectingMode) {
 			selectionLight.enabled = false;
 			scaleScript.ChangeSelectedObject (null);
 		}
+		return selectingMode;
 	}
 
 	// Update is called once per frame
@@ -39,7 +40,7 @@ public class Selection : MonoBehaviour {
 			if (Physics.Raycast (thisCamera.ScreenPointToRay (screenCenter), out itemHit, rayDistance, selectableMask)) 
 			{
 				target = itemHit.collider.gameObject;
-				print("Hit center: " + target);
+				//print("Hit center: " + target);
 			}
 			else if (Physics.Raycast (thisCamera.ScreenPointToRay (screenCenter + deltaY), out itemHit, rayDistance, selectableMask)) 
 			{
@@ -69,7 +70,7 @@ public class Selection : MonoBehaviour {
 			}	
 			selectionLight.transform.position = itemHit.point;
 			selectionLight.enabled = true;
-			print (selectionLight.transform.position);
+			//print (selectionLight.transform.position);
 			scaleScript.ChangeSelectedObject (target);
 		}
 

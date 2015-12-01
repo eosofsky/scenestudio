@@ -8,9 +8,6 @@ public class ScaleScript : MonoBehaviour {
 	private WiimoteScript wiimote;
 	public int mode;
 	private bool justStarted;
-	private bool zPressed;
-	private bool oPressed;
-	private bool pPressed;
 	
 	private Vector3 initialPos;
 	private Vector3 center;
@@ -88,8 +85,8 @@ public class ScaleScript : MonoBehaviour {
 			selectedObject.transform.position = pos + initDirection.normalized * (wiimote.accY) * 0.4f;
 		}
 	}
-	
-	void Delete() {
+
+	public void Delete() {
 		GameObject obj = selectedObject;
 		ChangeSelectedObject (null);
 		Destroy (obj);
@@ -105,7 +102,7 @@ public class ScaleScript : MonoBehaviour {
 		selectedObject = obj;
 	}
 	
-	void ChangeMode(bool next) {
+	public int ChangeMode(bool next) {
 		if (next) {
 			mode = (mode + 1) % 4;
 		} else {
@@ -113,6 +110,7 @@ public class ScaleScript : MonoBehaviour {
 		}
 		Debug.Log ("change mode " + mode);
 		justStarted = true;
+		return mode;
 	}
 	
 	// Use this for initialization
@@ -127,27 +125,6 @@ public class ScaleScript : MonoBehaviour {
 	void Update () {
 		//if there is a selected object, do something
 		if (selectedObject) {
-			//delete object
-			if (Input.GetKey (KeyCode.Z) && !zPressed) {
-				zPressed = true;
-				Delete ();
-			}
-			
-			//change modes
-			if (Input.GetKey (KeyCode.O) && !oPressed) {
-				oPressed = true;
-				ChangeMode(false);
-			}
-			if (Input.GetKey (KeyCode.P) && !pPressed) {
-				pPressed = true;
-				ChangeMode(true);
-			}
-			
-			
-			if (!Input.GetKey (KeyCode.Z)) zPressed = false;
-			if (!Input.GetKey (KeyCode.O)) oPressed = false;
-			if (!Input.GetKey (KeyCode.P)) pPressed = false;
-
 			if (mode == 0) {
 				Scale ();
 			} else if (mode == 1) {

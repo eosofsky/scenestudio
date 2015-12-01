@@ -13,6 +13,8 @@ public class InterfaceManager : MonoBehaviour {
 	private bool zPressed;
 	private bool escPressed;
 	private bool cPressed;
+	private bool oPressed;
+	private bool pPressed;
 	
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
@@ -26,6 +28,7 @@ public class InterfaceManager : MonoBehaviour {
 	public List<GameObject> panelObjects;
 	private DrawingManager drawingManager;
 	private Selection selector;
+	private ScaleScript scaler;
 	
 	private Predict predictor;
 	private int[] mapping;
@@ -47,6 +50,7 @@ public class InterfaceManager : MonoBehaviour {
 		
 		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict> ();
 		selector = GameObject.FindGameObjectWithTag ("ScaleSelection").GetComponent<Selection> ();
+		scaler = GameObject.FindGameObjectWithTag ("ScaleSelection").GetComponent<ScaleScript> ();
 		mapping = new int[10];
 		mapping [0] = 4;
 		mapping [1] = 6;
@@ -80,6 +84,9 @@ public class InterfaceManager : MonoBehaviour {
 		if (!Input.GetKey (KeyCode.Z)) zPressed = false;
 		if (!Input.GetButton ("Cancel")) escPressed = false;
 		if (!Input.GetKey (KeyCode.C)) cPressed = false;
+		if (!Input.GetKey (KeyCode.O)) oPressed = false;
+		if (!Input.GetKey (KeyCode.P)) pPressed = false;
+
 		
 		//in the normal state
 		if (normalState.activeSelf) {
@@ -93,8 +100,11 @@ public class InterfaceManager : MonoBehaviour {
 			//toggle edit mode
 			if (Input.GetKey (KeyCode.C) && !cPressed) {
 				cPressed = true;
-				selector.ToggleSelect();
-				edit();
+				bool select = selector.ToggleSelect();
+				if (select) 
+					edit();
+				else 
+					close();
 			}
 		} else {
 			movement.GetComponent<Move>().SetActivated(false);
@@ -102,10 +112,20 @@ public class InterfaceManager : MonoBehaviour {
 
 		//in edit mode
 		if (editState.activeSelf) {
-			if (Input.GetKey (KeyCode.C) && !cPressed) {
-				cPressed = true;
-				selector.ToggleSelect();
-				close();
+			//delete object
+			if (Input.GetKey (KeyCode.Z) && !zPressed) {
+				zPressed = true;
+				scaler.Delete ();
+			}
+
+			//change modes
+			if (Input.GetKey (KeyCode.O) && !oPressed) {
+				oPressed = true;
+				int mode = scaler.ChangeMode(false);
+			}
+			if (Input.GetKey (KeyCode.P) && !pPressed) {
+				pPressed = true;
+				scaler.ChangeMode(true);
 			}
 		}
 		
@@ -248,12 +268,13 @@ public class InterfaceManager : MonoBehaviour {
 	
 	//sets back to normal state
 	public void close() {
+		Debug.Log ("close");
+		editState.SetActive (false);
 		canvas.SetActive (false);
-		normalState.SetActive (true);
 		drawingState.SetActive (false);
 		pickState.SetActive (false);
 		wrongState.SetActive (false);
 		systemState.SetActive (false);
-		editState.SetActive (false);
+		normalState.SetActive (true);
 	}
 }
