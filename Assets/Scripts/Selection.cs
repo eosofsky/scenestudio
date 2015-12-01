@@ -61,7 +61,7 @@ public class Selection : MonoBehaviour {
 				print("Hit left: " + target);
 			}
 			else {
-				print ("Nope");
+//				print ("Nope");
 				selectionLight.enabled = false;
 				scaleScript.ChangeSelectedObject (null);
 				return;

@@ -29,52 +29,64 @@ public class ScaleScript : MonoBehaviour {
 	
 	/* These functions all assume that there is already a selected object. */
 	void Scale () {
-		Debug.Log ("scaling");
-		justStarted = false;
+		if (selectedObject) {
+			justStarted = false;
 
-		//make bigger - with minimum and maximum scales
-		Vector3 scale = selectedObject.transform.localScale;
-		float m = wiimote.accY * 0.25f;
-		scale -= new Vector3(m,m,m);
-		if (scale.x > 0.25f && scale.x < 2f) {
-			selectedObject.transform.localScale = scale;
+			//make bigger - with minimum and maximum scales
+			Vector3 scale = selectedObject.transform.localScale;
+			float m = wiimote.accY * 0.25f;
+			scale -= new Vector3 (m, m, m);
+			if (scale.x > 0.25f && scale.x < 2f) {
+				selectedObject.transform.localScale = scale;
+
+				//reposition on the y-axis so not underground
+				Vector3 pos = selectedObject.transform.position;
+				pos.y = selectedObject.GetComponent<Collider> ().bounds.size.y / 2;
+				selectedObject.transform.position = pos;
+			}
 		}
-
-		//reposition on the y-axis so not underground
-		Vector3 pos = selectedObject.transform.position;
-		pos.y = (selectedObject.GetComponent<Collider>().bounds.size.y/2;
-		selectedObject.transform.position = pos;
 	}
 
-	void TranslateConstantRadius () {
-		Debug.Log ("constant radius");
-		if (justStarted) {
-			initialPos = selectedObject.transform.position;
-			center = Camera.main.transform.position;
-			radius = Vector3.Distance(initialPos,center);
-		}
-		justStarted = false;
+	void Rotate() {
+		if (selectedObject) {
+			justStarted = false;
 
-		float deg = wiimote.accX * 180;
-		selectedObject.transform.RotateAround (center, new Vector3 (1, 0, 1), deg);
+			selectedObject.transform.RotateAround (selectedObject.transform.position, new Vector3 (0, 1, 0), wiimote.accX * 5);
+		}
+	}
+
+	void TranslateOrthogonal () {
+		if (selectedObject) {
+			if (justStarted) {
+				initialPos = selectedObject.transform.position;
+				center = Camera.main.transform.position;
+				center.y = initialPos.y;
+				initDirection = initialPos - center;
+				initDirection = new Vector3 (-initDirection.z, initDirection.y, initDirection.x);
+			}
+			justStarted = false;
+
+			Vector3 pos = selectedObject.transform.position;
+			selectedObject.transform.position = pos + initDirection.normalized * (-wiimote.accX) * 0.4f;
+		}
 	}
 	
 	void TranslateToMe () {
-		Debug.Log ("translate to and from");
-		float accY = wiimote.accY;
+		if (selectedObject) {
+			float accY = wiimote.accY;
 
-		if (justStarted) {
-			initialPos = selectedObject.transform.position;
-			center = Camera.main.transform.position;
-			initDirection = initialPos - center;
-		} 
-		justStarted = false;
+			if (justStarted) {
+				initialPos = selectedObject.transform.position;
+				center = Camera.main.transform.position;
+				center.y = initialPos.y;
+				initDirection = initialPos - center;
+			} 
+			justStarted = false;
 
-		//lifting the wiimote should make the object come closer to you
-		Vector3 pos = selectedObject.transform.position;
-		radius = Vector3.Distance (pos,center);
-		radius -= accY * 0.25f;
-		selectedObject.transform.position = pos + initDirection.normalized*radius;
+			//lifting the wiimote should make the object come closer to you
+			Vector3 pos = selectedObject.transform.position;
+			selectedObject.transform.position = pos + initDirection.normalized * (wiimote.accY) * 0.4f;
+		}
 	}
 
 	void Delete() {
@@ -95,9 +107,9 @@ public class ScaleScript : MonoBehaviour {
 
 	void ChangeMode(bool next) {
 		if (next) {
-			mode = (mode + 1) % 3;
+			mode = (mode + 1) % 4;
 		} else {
-			mode = (mode - 1 + 3) % 3;
+			mode = (mode - 1 + 4) % 4;
 		}
 		Debug.Log ("change mode " + mode);
 		justStarted = true;
@@ -117,19 +129,16 @@ public class ScaleScript : MonoBehaviour {
 		if (selectedObject) {
 			//delete object
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
-				Debug.Log ("B button/Z pressed");
 				zPressed = true;
 				Delete ();
 			}
 
 			//change modes
 			if (Input.GetKey (KeyCode.O) && !oPressed) {
-				Debug.Log ("- pressed");
 				oPressed = true;
 				ChangeMode(false);
 			}
 			if (Input.GetKey (KeyCode.P) && !pPressed) {
-				Debug.Log ("+ pressed");
 				pPressed = true;
 				ChangeMode(true);
 			}
@@ -138,17 +147,15 @@ public class ScaleScript : MonoBehaviour {
 			if (!Input.GetKey (KeyCode.Z)) zPressed = false;
 			if (!Input.GetKey (KeyCode.O)) oPressed = false;
 			if (!Input.GetKey (KeyCode.P)) pPressed = false;
-			
-			switch(mode) {
-	  			case 0:
-					Scale ();
-					break;
-				case 1:
-					TranslateConstantRadius();
-					break;
-				default:
-					TranslateToMe();
-					break;
+
+			if (mode == 0) {
+				Scale ();
+			} else if (mode == 1) {
+				TranslateOrthogonal();
+			} else if (mode == 2) {
+				TranslateToMe();
+			} else {
+				Rotate();
 			}
 		}
 	}
