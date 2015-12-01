@@ -34,14 +34,14 @@ public class ScaleScript : MonoBehaviour {
 		//make bigger - with minimum and maximum scales
 		Vector3 scale = selectedObject.transform.localScale;
 		float m = wiimote.accY * 0.25f;
-		scale += new Vector3(m,m,m);
-		if (scale.x > 0.25f && scale.x < 3f) {
+		scale -= new Vector3(m,m,m);
+		if (scale.x > 0.25f && scale.x < 2f) {
 			selectedObject.transform.localScale = scale;
 		}
 
 		//reposition on the y-axis so not underground
 		Vector3 pos = selectedObject.transform.position;
-		pos.y = selectedObject.GetComponent<Renderer> ().bounds.size.y/2;
+		pos.y = (selectedObject.GetComponent<Mesh>().bounds.size.y*selectedObject.transform.localScale.y)/2;
 		selectedObject.transform.position = pos;
 	}
 
