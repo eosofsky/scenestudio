@@ -23,15 +23,16 @@ public class Selection : MonoBehaviour {
 		scaleScript = gameObject.GetComponent <ScaleScript> ();
 	}
 
+	public void ToggleSelect() {
+		selectingMode = !selectingMode;
+		if (!selectingMode) {
+			selectionLight.enabled = false;
+			scaleScript.ChangeSelectedObject (null);
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.C)) {
-			selectingMode = !selectingMode;
-			if (!selectingMode) {
-				selectionLight.enabled = false;
-				scaleScript.ChangeSelectedObject (null);
-			}
-		}
 		if (selectingMode) {
 			RaycastHit itemHit;
 			GameObject target;

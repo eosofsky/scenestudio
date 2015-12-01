@@ -6,7 +6,7 @@ public class ScaleScript : MonoBehaviour {
 	private GameObject selectedObject;
 	private InterfaceManager interfaceManager;
 	private WiimoteScript wiimote;
-	private int mode;
+	public int mode;
 	private bool justStarted;
 	private bool zPressed;
 	private bool oPressed;
