@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ScaleScript : MonoBehaviour {
-
+	
 	private GameObject selectedObject;
 	private InterfaceManager interfaceManager;
 	private WiimoteScript wiimote;
@@ -11,12 +11,12 @@ public class ScaleScript : MonoBehaviour {
 	private bool zPressed;
 	private bool oPressed;
 	private bool pPressed;
-
+	
 	private Vector3 initialPos;
 	private Vector3 center;
 	private float radius;
 	private Vector3 initDirection;
-
+	
 	/*
 	 * Press 2 to toggle between 3 modes:
 	 * 1) translation (constant radius around you) - rotate right and left
@@ -88,23 +88,23 @@ public class ScaleScript : MonoBehaviour {
 			selectedObject.transform.position = pos + initDirection.normalized * (wiimote.accY) * 0.4f;
 		}
 	}
-
+	
 	void Delete() {
 		GameObject obj = selectedObject;
 		ChangeSelectedObject (null);
 		Destroy (obj);
 	}
-
+	
 	public void ChangeSelectedObject(GameObject obj) {
 		if (obj && !selectedObject) {
 			//TODO: ENTER EDIT MODE
 		} else if (!obj && selectedObject) {
 			//TODO: EXIT EDIT MODE
 		}
-
+		
 		selectedObject = obj;
 	}
-
+	
 	void ChangeMode(bool next) {
 		if (next) {
 			mode = (mode + 1) % 4;
@@ -119,7 +119,7 @@ public class ScaleScript : MonoBehaviour {
 	void Start () {
 		wiimote = GameObject.FindGameObjectWithTag("Wiimote").GetComponent<WiimoteScript>();
 		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent<InterfaceManager> ();
-
+		
 		mode = 0;
 	}
 	
@@ -132,7 +132,7 @@ public class ScaleScript : MonoBehaviour {
 				zPressed = true;
 				Delete ();
 			}
-
+			
 			//change modes
 			if (Input.GetKey (KeyCode.O) && !oPressed) {
 				oPressed = true;
@@ -142,8 +142,8 @@ public class ScaleScript : MonoBehaviour {
 				pPressed = true;
 				ChangeMode(true);
 			}
-
-
+			
+			
 			if (!Input.GetKey (KeyCode.Z)) zPressed = false;
 			if (!Input.GetKey (KeyCode.O)) oPressed = false;
 			if (!Input.GetKey (KeyCode.P)) pPressed = false;

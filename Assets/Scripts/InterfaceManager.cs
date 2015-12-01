@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class InterfaceManager : MonoBehaviour {
-
+	
 	public GameObject canvas;
 	private bool canvasOpen;
 	private bool submitPressed;
@@ -12,11 +12,12 @@ public class InterfaceManager : MonoBehaviour {
 	private bool rightPressed;
 	private bool zPressed;
 	private bool escPressed;
-
+	
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
 	public GameObject pickState; //add model?
 	public GameObject wrongState; //what model did you mean?
+	public GameObject editState; //interact with models
 	public GameObject systemState; //drawingsystem
 	public Image predictedImage; //image that displays what was predicted
 	public GameObject panel; //array of other objects
@@ -24,10 +25,10 @@ public class InterfaceManager : MonoBehaviour {
 	public GameObject movement;
 	public List<GameObject> panelObjects;
 	private DrawingManager drawingManager;
-
+	
 	private Predict predictor;
 	private int[] mapping;
-
+	
 	private int selected; //for the pick state
 	
 	// Use this for initialization
@@ -37,12 +38,13 @@ public class InterfaceManager : MonoBehaviour {
 		drawingState.SetActive (false);
 		pickState.SetActive (false);
 		wrongState.SetActive (false);
+		editState.SetActive (false);
 		systemState.SetActive (false);
+
 		
 		canvasOpen = false;
-
+		
 		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict> ();
-
 		mapping = new int[10];
 		mapping [0] = 4;
 		mapping [1] = 6;
@@ -55,7 +57,7 @@ public class InterfaceManager : MonoBehaviour {
 		mapping [8] = 7;
 		mapping [9] = 9;
 	}
-
+	
 	public void Toggle () {
 		if (canvasOpen) {
 			canvas.SetActive(false);
@@ -66,7 +68,7 @@ public class InterfaceManager : MonoBehaviour {
 			canvasOpen = true;
 		}
 	}
-
+	
 	// Update is called once per frame
 	void Update () {
 		//reset inputs
@@ -85,7 +87,7 @@ public class InterfaceManager : MonoBehaviour {
 		if (!Input.GetButton ("Cancel")) {
 			escPressed = false;
 		}
-
+		
 		//in the normal state
 		if (normalState.activeSelf) {
 			movement.GetComponent<Move> ().SetActivated (true);
@@ -97,7 +99,7 @@ public class InterfaceManager : MonoBehaviour {
 		} else {
 			movement.GetComponent<Move>().SetActivated(false);
 		}
-
+		
 		//in the drawing state
 		if (drawingState.activeSelf) {
 			//stop drawing
@@ -105,7 +107,7 @@ public class InterfaceManager : MonoBehaviour {
 				submitPressed = true;
 				close ();
 			}
-
+			
 			//submit drawing
 			if (Input.GetButtonDown ("Cancel") && !drawingManager.empty && !escPressed) {
 				escPressed = true;
@@ -114,7 +116,7 @@ public class InterfaceManager : MonoBehaviour {
 				predictor.RunArt();
 			}
 		}
-
+		
 		//in the pick state
 		if (pickState.activeSelf) {
 			//correct model - A Button
@@ -123,27 +125,27 @@ public class InterfaceManager : MonoBehaviour {
 				predictor.add ();
 				predictedImage.sprite = Resources.Load <Sprite>("default");
 			}
-
+			
 			//wrong model - B Button
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
 				wrongModel();
 				zPressed = true;
 			}
-
+			
 			//go back to drawing
 			if (Input.GetButtonDown ("Cancel") && !escPressed) {
 				escPressed = true;
 				draw ();
 				predictedImage.sprite = Resources.Load <Sprite>("default");
 			}
-
+			
 			//go back to normal
 			if (Input.GetButtonDown("Submit") && !submitPressed) {
 				submitPressed = true;
 				close ();
 			}
 		}
-
+		
 		//in the wrong state
 		if (wrongState.activeSelf) {
 			//switch selected objects
@@ -155,27 +157,27 @@ public class InterfaceManager : MonoBehaviour {
 				rightPressed = true;
 				ChangeSelection (true);
 			}
-
+			
 			//select the object
 			if (Input.GetKey (KeyCode.X)) {
 				close();
 				predictor.AddObject (mapping[selected]);
 			}
-
+			
 			//ENTER - exit out of object placement mode (go back to normal)
 			if (Input.GetButtonDown ("Submit")) {
 				close ();
 			}
-
+			
 			//B - go back to the object from before
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
 				doneDrawing ();
 				zPressed = true;
 			}
 		}
-
+		
 	}
-
+	
 	private void ChangeSelection(bool right) {
 		if (right) {
 			selected = (selected + 1) % 10;
@@ -183,18 +185,19 @@ public class InterfaceManager : MonoBehaviour {
 			selected = (selected - 1 + 10) % 10;
 		}
 		Debug.Log ("selected is " + selected);
-
+		
 		RectTransform rect = panel.GetComponent<RectTransform> ();
 		Vector3 pos = rect.anchoredPosition;
 		pos.x = 645f - (selected*200f*0.79201f);
 		panel.GetComponent<RectTransform> ().anchoredPosition = pos;
 	}
-
+	
 	//pull up canvas when draw button is clicked
 	public void draw() {
 		canvas.SetActive (true);
 		canvasOpen = true;
 		normalState.SetActive (false);
+		editState.SetActive (false);
 		pickState.SetActive (false);
 		drawingState.SetActive (true);
 		systemState.SetActive (true);
@@ -210,7 +213,7 @@ public class InterfaceManager : MonoBehaviour {
 		canvas.SetActive (false);
 		systemState.SetActive (true);
 	}
-
+	
 	//either doesnt recognize, or player says model is wrong
 	public void wrongModel() {
 		wrongState.SetActive (true);
