@@ -27,6 +27,10 @@ public class Selection : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyDown (KeyCode.C)) {
 			selectingMode = !selectingMode;
+			if (!selectingMode) {
+				selectionLight.enabled = false;
+				scaleScript.ChangeSelectedObject (null);
+			}
 		}
 		if (selectingMode) {
 			RaycastHit itemHit;
@@ -59,6 +63,7 @@ public class Selection : MonoBehaviour {
 			else {
 				print ("Nope");
 				selectionLight.enabled = false;
+				scaleScript.ChangeSelectedObject (null);
 				return;
 			}	
 			selectionLight.transform.position = itemHit.point;
