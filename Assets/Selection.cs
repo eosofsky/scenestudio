@@ -12,6 +12,7 @@ public class Selection : MonoBehaviour {
 	private Vector3 deltaY;
 	private Vector3 deltaX;
 	public Light selectionLight;
+	private ScaleScript scaleScript;
 
 	void Start () {
 		thisCamera = Camera.main;
@@ -19,6 +20,7 @@ public class Selection : MonoBehaviour {
 		screenCenter = new Vector3 (Screen.width / 2, Screen.height / 2);
 		deltaY = new Vector3 (0.0f, rayRadius);
 		deltaX = new Vector3 (rayRadius, 0.0f);
+		scaleScript = gameObject.GetComponent <ScaleScript> ();
 	}
 
 	// Update is called once per frame
@@ -62,6 +64,7 @@ public class Selection : MonoBehaviour {
 			selectionLight.transform.position = itemHit.point;
 			selectionLight.enabled = true;
 			print (selectionLight.transform.position);
+			scaleScript.ChangeSelectedObject (target);
 		}
 
 	}

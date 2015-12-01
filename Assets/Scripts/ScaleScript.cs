@@ -15,8 +15,6 @@ public class ScaleScript : MonoBehaviour {
 	private float radius;
 	private Vector3 initDirection;
 
-	public GameObject cursor;
-
 	/*
 	 * Press 2 to toggle between 3 modes:
 	 * 1) translation (constant radius around you) - rotate right and left
@@ -78,13 +76,6 @@ public class ScaleScript : MonoBehaviour {
 		Destroy (obj);
 	}
 
-	void MoveCursor () {
-		Vector3 newPosition = cursor.transform.localPosition;
-		newPosition.x += wiimote.accX * 0.25f;
-		newPosition.y -= wiimote.accY * 0.25f;
-		cursor.transform.localPosition = Vector3.Slerp (cursor.transform.localPosition, newPosition, Time.deltaTime * 20);
-	}
-
 	public void ChangeSelectedObject(GameObject obj) {
 		if (obj && !selectedObject) {
 			//TODO: ENTER EDIT MODE
@@ -106,8 +97,6 @@ public class ScaleScript : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		cursor.transform.localPosition = new Vector3 (0, 0, 3);
-	
 		wiimote = GameObject.FindGameObjectWithTag("Wiimote").GetComponent<WiimoteScript>();
 		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent<InterfaceManager> ();
 
