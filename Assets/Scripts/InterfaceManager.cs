@@ -15,6 +15,7 @@ public class InterfaceManager : MonoBehaviour {
 	private bool cPressed;
 	private bool oPressed;
 	private bool pPressed;
+	private int lastEditMode;
 	
 	public GameObject normalState;  //no canvas
 	public GameObject drawingState; //canvas up
@@ -25,10 +26,10 @@ public class InterfaceManager : MonoBehaviour {
 	public Image predictedImage; //image that displays what was predicted
 	public GameObject panel; //array of other objects
 	public GameObject movement;
-	public List<GameObject> panelObjects;
 	private DrawingManager drawingManager;
 	private Selection selector;
 	private ScaleScript scaler;
+	public List<GameObject> editButtons;
 	
 	private Predict predictor;
 	private int[] mapping;
@@ -87,13 +88,16 @@ public class InterfaceManager : MonoBehaviour {
 		if (!Input.GetKey (KeyCode.O)) oPressed = false;
 		if (!Input.GetKey (KeyCode.P)) pPressed = false;
 
-		
 		//in the normal state
 		if (normalState.activeSelf) {
 			movement.GetComponent<Move> ().SetActivated (true);
 			//start drawing
 			if (Input.GetButtonDown ("Submit") && !submitPressed) {
 				submitPressed = true;
+				if (editState.activeSelf) {
+					selector.ToggleSelect();
+					editButtons[lastEditMode].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+				}
 				draw ();
 			}
 
@@ -101,10 +105,13 @@ public class InterfaceManager : MonoBehaviour {
 			if (Input.GetKey (KeyCode.C) && !cPressed) {
 				cPressed = true;
 				bool select = selector.ToggleSelect();
-				if (select) 
+				if (select) { 
 					edit();
-				else 
+					editButtons[lastEditMode].transform.localScale = new Vector3(1.35f,1.35f,1.35f);
+				} else {
 					close();
+					editButtons[lastEditMode].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+				}
 			}
 		} else {
 			movement.GetComponent<Move>().SetActivated(false);
@@ -121,11 +128,15 @@ public class InterfaceManager : MonoBehaviour {
 			//change modes
 			if (Input.GetKey (KeyCode.O) && !oPressed) {
 				oPressed = true;
-				int mode = scaler.ChangeMode(false);
+				lastEditMode = scaler.ChangeMode(false);
+				editButtons[(lastEditMode+1)%4].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+				editButtons[lastEditMode].transform.localScale = new Vector3(1.35f,1.35f,1.35f);
 			}
 			if (Input.GetKey (KeyCode.P) && !pPressed) {
 				pPressed = true;
-				scaler.ChangeMode(true);
+				lastEditMode = scaler.ChangeMode(true);
+				editButtons[(lastEditMode-1+4)%4].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+				editButtons[lastEditMode].transform.localScale = new Vector3(1.35f,1.35f,1.35f);
 			}
 		}
 		
@@ -268,7 +279,6 @@ public class InterfaceManager : MonoBehaviour {
 	
 	//sets back to normal state
 	public void close() {
-		Debug.Log ("close");
 		editState.SetActive (false);
 		canvas.SetActive (false);
 		drawingState.SetActive (false);
