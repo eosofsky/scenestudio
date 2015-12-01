@@ -42,7 +42,7 @@ public class ScaleScript : MonoBehaviour {
 
 		//reposition on the y-axis so not underground
 		Vector3 pos = selectedObject.transform.position;
-		pos.y = (selectedObject.GetComponent<Collider>().bounds.size.y*selectedObject.transform.localScale.y)/2;
+		pos.y = (selectedObject.GetComponent<Collider>().bounds.size.y/2;
 		selectedObject.transform.position = pos;
 	}
 
@@ -115,18 +115,6 @@ public class ScaleScript : MonoBehaviour {
 	void Update () {
 		//if there is a selected object, do something
 		if (selectedObject) {
-			switch(mode) {
-	  			case 0:
-					Scale ();
-					break;
-				case 1:
-					TranslateConstantRadius();
-					break;
-				default:
-					TranslateToMe();
-					break;
-			}
-
 			//delete object
 			if (Input.GetKey (KeyCode.Z) && !zPressed) {
 				Debug.Log ("B button/Z pressed");
@@ -150,6 +138,18 @@ public class ScaleScript : MonoBehaviour {
 			if (!Input.GetKey (KeyCode.Z)) zPressed = false;
 			if (!Input.GetKey (KeyCode.O)) oPressed = false;
 			if (!Input.GetKey (KeyCode.P)) pPressed = false;
+			
+			switch(mode) {
+	  			case 0:
+					Scale ();
+					break;
+				case 1:
+					TranslateConstantRadius();
+					break;
+				default:
+					TranslateToMe();
+					break;
+			}
 		}
 	}
 }
