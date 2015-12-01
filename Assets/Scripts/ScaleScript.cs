@@ -29,6 +29,7 @@ public class ScaleScript : MonoBehaviour {
 	
 	/* These functions all assume that there is already a selected object. */
 	void Scale () {
+		Debug.Log ("scaling");
 		justStarted = false;
 
 		//make bigger - with minimum and maximum scales
@@ -46,6 +47,7 @@ public class ScaleScript : MonoBehaviour {
 	}
 
 	void TranslateConstantRadius () {
+		Debug.Log ("constant radius");
 		if (justStarted) {
 			initialPos = selectedObject.transform.position;
 			center = Camera.main.transform.position;
@@ -58,6 +60,7 @@ public class ScaleScript : MonoBehaviour {
 	}
 	
 	void TranslateToMe () {
+		Debug.Log ("translate to and from");
 		float accY = wiimote.accY;
 
 		if (justStarted) {
