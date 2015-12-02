@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ScaleScript : MonoBehaviour {
 	
@@ -14,6 +16,8 @@ public class ScaleScript : MonoBehaviour {
 	private Vector3 initDirection;
 
 	public int modes = 5;
+
+	private Dictionary<string, float> begLocs;
 	
 	/*
 	 * Press - and + to toggle between modes:
@@ -91,8 +95,18 @@ public class ScaleScript : MonoBehaviour {
 			}
 			justStarted = false;
 
-			Vector3 pos = selectedObject.transform.position;
-			selectedObject.transform.position = pos + initDirection.normalized * wiimote.accY * 0.4f;
+			float y;
+			string name = selectedObject.name;
+			int indexofLPar = name.IndexOf('(');
+			name = name.Substring(0,indexofLPar);
+			Debug.Log ("name " + name);
+			if (begLocs.TryGetValue(name,out y)) {
+				Vector3 pos = selectedObject.transform.position;
+				pos += initDirection.normalized * (-wiimote.accY) * 0.4f;
+				if (pos.y > y) {
+					selectedObject.transform.position = pos;
+				}
+			}
 		}
 	}
 
@@ -121,6 +135,18 @@ public class ScaleScript : MonoBehaviour {
 		wiimote = GameObject.FindGameObjectWithTag("Wiimote").GetComponent<WiimoteScript>();
 		
 		mode = 0;
+
+		begLocs = new Dictionary<string, float> ();
+		begLocs.Add ("airplane", 0.4f);
+		begLocs.Add ("apple", 0.0f);
+		begLocs.Add ("bike", 0f);
+		begLocs.Add ("fish", 0.4f);
+		begLocs.Add ("lightbulb", 0.6f);
+		begLocs.Add ("monkey", 0.39f);
+		begLocs.Add ("pig", 0.25f);
+		begLocs.Add ("pizza", 0.07f);
+		begLocs.Add ("snowman", -0.06f);
+		begLocs.Add ("tree", 0.64f);
 	}
 	
 	// Update is called once per frame

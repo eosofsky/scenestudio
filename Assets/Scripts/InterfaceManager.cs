@@ -152,6 +152,8 @@ public class InterfaceManager : MonoBehaviour {
 			if (Input.GetButtonDown ("Cancel") && !drawingManager.empty && !escPressed) {
 				escPressed = true;
 				doneDrawing ();
+				predictedImage.sprite = Resources.Load <Sprite>("default");
+				predictor.txtRef.text = "";
 				canvas.GetComponent<DrawingManager>().SaveImage();
 				predictor.RunArt();
 			}
