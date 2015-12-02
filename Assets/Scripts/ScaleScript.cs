@@ -13,7 +13,7 @@ public class ScaleScript : MonoBehaviour {
 	private float radius;
 	private Vector3 initDirection;
 
-	private int modes = 5;
+	public int modes = 5;
 	
 	/*
 	 * Press - and + to toggle between modes:

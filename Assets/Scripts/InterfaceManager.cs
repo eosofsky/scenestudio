@@ -129,13 +129,13 @@ public class InterfaceManager : MonoBehaviour {
 			if (Input.GetKey (KeyCode.O) && !oPressed) {
 				oPressed = true;
 				lastEditMode = scaler.ChangeMode(false);
-				editButtons[(lastEditMode+1)%4].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+				editButtons[(lastEditMode+1)%scaler.modes].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
 				editButtons[lastEditMode].transform.localScale = new Vector3(1.35f,1.35f,1.35f);
 			}
 			if (Input.GetKey (KeyCode.P) && !pPressed) {
 				pPressed = true;
 				lastEditMode = scaler.ChangeMode(true);
-				editButtons[(lastEditMode-1+4)%4].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+				editButtons[(lastEditMode-1+scaler.modes)%scaler.modes].transform.localScale = new Vector3(1.0f,1.0f,1.0f);
 				editButtons[lastEditMode].transform.localScale = new Vector3(1.35f,1.35f,1.35f);
 			}
 		}
