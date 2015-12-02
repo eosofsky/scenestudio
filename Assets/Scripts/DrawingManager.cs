@@ -19,7 +19,6 @@ public class DrawingManager : MonoBehaviour
 	private float heightFactor;
 	private Vector2 lastpoint;
 	public Camera thisCamera;
-	private InterfaceManager interfaceManager;
 	public bool empty;
 	
 	//for Wiimote
@@ -27,9 +26,6 @@ public class DrawingManager : MonoBehaviour
 	private bool zPressed;
 	private bool xPressed;
 	private WiimoteScript wiimote;
-
-	//predict
-	private Predict predictor;
 
 	void drawPoint(Vector2 point) {
 		int x = (int) point.x;
@@ -93,9 +89,7 @@ public class DrawingManager : MonoBehaviour
 		
 		widthFactor = (texture.width / (topRight.position.x - bottomLeft.position.x));
 		heightFactor = (texture.height / (topRight.position.y - bottomLeft.position.y));
-
-		predictor = GameObject.FindGameObjectWithTag ("Predictor").GetComponent<Predict>();
-		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent <InterfaceManager> ();
+	
 		wiimote = GameObject.FindGameObjectWithTag ("Wiimote").GetComponent<WiimoteScript> ();
 	}
 

@@ -1,10 +1,9 @@
-﻿using UnityEngine;using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class ScaleScript : MonoBehaviour {
 	
 	private GameObject selectedObject;
-	private InterfaceManager interfaceManager;
 	private WiimoteScript wiimote;
 	public int mode;
 	private bool justStarted;
@@ -13,15 +12,16 @@ public class ScaleScript : MonoBehaviour {
 	private Vector3 center;
 	private float radius;
 	private Vector3 initDirection;
+
+	private int modes = 5;
 	
 	/*
-	 * Press 2 to toggle between 3 modes:
-	 * 1) translation (constant radius around you) - rotate right and left
-	 * 2) translation (closer and farther from you) - lift up (closser) and down (farther)
-	 * 3) scaling - lift up (bigger) and down (smaller)
-	 * 
-	 * Press Z to make the cursor appear. Move the wiimote around by lifting up and twisting.
-	 * Press X to select an object (whichever object you intersect first). 
+	 * Press - and + to toggle between modes:
+	 * 1) scaling
+	 * 2) translate left and right
+	 * 3) translate forward and backward 
+	 * 4) translate up and down
+	 * 5) rotate
 	 */
 	
 	/* These functions all assume that there is already a selected object. */
@@ -70,8 +70,6 @@ public class ScaleScript : MonoBehaviour {
 	
 	void TranslateToMe () {
 		if (selectedObject) {
-			float accY = wiimote.accY;
-
 			if (justStarted) {
 				initialPos = selectedObject.transform.position;
 				center = Camera.main.transform.position;
@@ -86,6 +84,18 @@ public class ScaleScript : MonoBehaviour {
 		}
 	}
 
+	void UpAndDown() {
+		if (selectedObject) {
+			if (justStarted) {
+				initDirection = new Vector3(0,1,0);
+			}
+			justStarted = false;
+
+			Vector3 pos = selectedObject.transform.position;
+			selectedObject.transform.position = pos + initDirection.normalized * wiimote.accY * 0.4f;
+		}
+	}
+
 	public void Delete() {
 		GameObject obj = selectedObject;
 		ChangeSelectedObject (null);
@@ -93,22 +103,15 @@ public class ScaleScript : MonoBehaviour {
 	}
 	
 	public void ChangeSelectedObject(GameObject obj) {
-		if (obj && !selectedObject) {
-			//TODO: ENTER EDIT MODE
-		} else if (!obj && selectedObject) {
-			//TODO: EXIT EDIT MODE
-		}
-		
 		selectedObject = obj;
 	}
 	
 	public int ChangeMode(bool next) {
 		if (next) {
-			mode = (mode + 1) % 4;
+			mode = (mode + 1) % modes;
 		} else {
-			mode = (mode - 1 + 4) % 4;
+			mode = (mode - 1 + modes) % modes;
 		}
-		Debug.Log ("change mode " + mode);
 		justStarted = true;
 		return mode;
 	}
@@ -116,7 +119,6 @@ public class ScaleScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		wiimote = GameObject.FindGameObjectWithTag("Wiimote").GetComponent<WiimoteScript>();
-		interfaceManager = GameObject.FindGameObjectWithTag ("Interface Manager").GetComponent<InterfaceManager> ();
 		
 		mode = 0;
 	}
@@ -131,6 +133,8 @@ public class ScaleScript : MonoBehaviour {
 				TranslateOrthogonal();
 			} else if (mode == 2) {
 				TranslateToMe();
+			} else if (mode == 3) {
+				UpAndDown();
 			} else {
 				Rotate();
 			}
