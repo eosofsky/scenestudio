@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -42,7 +41,7 @@ public class ScaleScript : MonoBehaviour {
 
 				//reposition on the y-axis so not underground
 				Vector3 pos = selectedObject.transform.position;
-				pos.y = selectedObject.GetComponent<Collider> ().bounds.size.y / 2;
+				//pos.y = selectedObject.GetComponent<Collider> ().bounds.size.y / 2;
 				selectedObject.transform.position = pos;
 			}
 		}
