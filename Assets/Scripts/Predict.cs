@@ -107,7 +107,7 @@ public class Predict : MonoBehaviour {
 		GameObject obj = objects[predict];
 		objectsInScene.Add (obj);
 		Vector3 instantiateLoc = Camera.main.transform.position + Camera.main.transform.forward * instantiateDistance;
-		instantiateLoc.y = obj.GetComponent<Collider>().bounds.size.y/2;
+		instantiateLoc.y = obj.transform.position.y;//obj.GetComponent<Collider>().bounds.size.y/2;
 		Instantiate(obj, instantiateLoc, obj.transform.rotation);
 	}
 }
